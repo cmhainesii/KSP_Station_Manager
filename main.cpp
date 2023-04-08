@@ -17,6 +17,8 @@ using SpaceStationBuilder = KSP_SM::SpaceStationBuilder;
 
 using nlohmann::json;
 using std::vector;
+using namespace KSP_SM;
+
 typedef std::unique_ptr<SpaceStation> station_uniq_ptr;
 
 int main(int argc, char **argv);
@@ -28,98 +30,93 @@ void writeStationsToFile(const string &filename, json stations_json);
 
 constexpr string STATIONS_FILENAME = "stations.json";
 
-namespace KSP_SM
+int main(int argc, char **argv)
 {
 
-    int main(int argc, char **argv)
+    vector<station_uniq_ptr> stations;
+    bool exitProgram = false;
+    std::string buffer;
+    std::string menuText = Menu::getMenuText();
+
+    while (!exitProgram)
     {
-
-        vector<station_uniq_ptr> stations;
-        bool exitProgram = false;
-        std::string buffer;
-        std::string menuText = Menu::getMenuText();
-
-        while (!exitProgram)
+        std::cout << std::endl;
+        std::cout << menuText;
+        std::cout << "Enter Your Selection: ";
+        std::cin >> buffer;
+        if (buffer.compare("1") == 0)
         {
-            std::cout << std::endl;
-            std::cout << menuText;
-            std::cout << "Enter Your Selection: ";
-            std::cin >> buffer;
-            if (buffer.compare("1") == 0)
+            // Attempt to read stations from file. Result is the number of stations read from json file.
+            auto number_of_stations = readStationsFromFile(STATIONS_FILENAME, stations);
+            if (!number_of_stations) // Show an error if no stations are found / file not found.
             {
-                // Attempt to read stations from file. Result is the number of stations read from json file.
-                auto number_of_stations = readStationsFromFile(STATIONS_FILENAME, stations);
-                if (!number_of_stations) // Show an error if no stations are found / file not found.
-                {
-                    std::cerr << "Aborting." << std::endl;
-                    continue;
-                }
-                // Successful load, print number of stations loaded and go back to the main menu.
-                std::cout << fmt::format("Read in {} stations from file {}.", stations.size(), STATIONS_FILENAME) << std::endl;
+                std::cerr << "Aborting." << std::endl;
                 continue;
             }
-            if (buffer.compare("2") == 0)
-            {
-                json stations_json = stations;
-                writeStationsToFile(STATIONS_FILENAME, stations_json);
+            // Successful load, print number of stations loaded and go back to the main menu.
+            std::cout << fmt::format("Read in {} stations from file {}.", stations.size(), STATIONS_FILENAME) << std::endl;
+            continue;
+        }
+        if (buffer.compare("2") == 0)
+        {
+            json stations_json = stations;
+            writeStationsToFile(STATIONS_FILENAME, stations_json);
 
-                std::cout << "Wrote stations list to file." << std::endl
-                          << std::endl;
-                continue;
-            }
-            if (buffer.compare("3") == 0)
-            {
-                auto newStation = SpaceStationBuilder::createStationFromConsoleInput();
-                stations.push_back(std::move(newStation));
-                continue;
-            }
-            if (buffer.compare("4") == 0)
-            {
-                listAllStations(stations);
-                continue;
-            }
-            if (buffer.compare("q") == 0)
-            {
-                exitProgram = true;
-                continue;
-            }
-
-            std::cerr << "Error reading selection." << std::endl;
+            std::cout << "Wrote stations list to file." << std::endl
+                      << std::endl;
+            continue;
+        }
+        if (buffer.compare("3") == 0)
+        {
+            auto newStation = SpaceStationBuilder::createStationFromConsoleInput();
+            stations.push_back(std::move(newStation));
+            continue;
+        }
+        if (buffer.compare("4") == 0)
+        {
+            listAllStations(stations);
+            continue;
+        }
+        if (buffer.compare("q") == 0)
+        {
+            exitProgram = true;
+            continue;
         }
 
+        std::cerr << "Error reading selection." << std::endl;
+    }
+
+    return 0;
+}
+
+unsigned short readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations)
+{
+    std::ifstream in_file(filename);
+    if (!in_file)
+    {
+        std::cerr << fmt::format("Error: {} not found.", filename) << std::endl;
         return 0;
     }
+    json j;
+    in_file >> j;
+    in_file.close(); // close file when done!
 
-    unsigned short readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations)
+    stations.clear();                             // clear stations vector prior to loading stations from json
+    stations = j.get<vector<station_uniq_ptr>>(); // convert json to vector of unique_ptrs to json
+    return stations.size();
+}
+
+void listAllStations(const vector<station_uniq_ptr> &stations)
+{
+    for (auto i = 0; i < stations.size(); ++i)
     {
-        std::ifstream in_file(filename);
-        if (!in_file)
-        {
-            std::cerr << fmt::format("Error: {} not found.", filename) << std::endl;
-            return 0;
-        }
-        json j;
-        in_file >> j;
-        in_file.close(); // close file when done!
-
-        stations.clear();                             // clear stations vector prior to loading stations from json
-        stations = j.get<vector<station_uniq_ptr>>(); // convert json to vector of unique_ptrs to json
-        return stations.size();
+        std::cout << fmt::format("{}) {}", i, stations.at(i)->ToString()) << std::endl;
     }
+}
 
-    void listAllStations(const vector<station_uniq_ptr> &stations)
-    {
-        for (auto i = 0; i < stations.size(); ++i)
-        {
-            std::cout << fmt::format("{}) {}", i, stations.at(i)->ToString()) << std::endl;
-        }
-    }
-
-    void writeStationsToFile(const string &filename, json stations_json)
-    {
-        std::ofstream out_file(STATIONS_FILENAME);
-        out_file << stations_json.dump(4) << std::endl;
-        out_file.close(); // close file when done!
-    }
-
+void writeStationsToFile(const string &filename, json stations_json)
+{
+    std::ofstream out_file(STATIONS_FILENAME);
+    out_file << stations_json.dump(4) << std::endl;
+    out_file.close(); // close file when done!
 }
