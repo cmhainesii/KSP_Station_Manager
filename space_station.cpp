@@ -20,7 +20,8 @@ namespace KSP_SM
 
     SpaceStationBuilder::SpaceStationBuilder(string station_id)
     {
-        this->m_space_station = std::unique_ptr<SpaceStation>(new SpaceStation(station_id));
+        this->m_space_station = std::make_unique<KSP_SM::SpaceStationBuilder::SpaceStation>(station_id);
+        //std::unique_ptr<SpaceStation>(new SpaceStation(station_id));
     }
 
     string SpaceStation::ToString()

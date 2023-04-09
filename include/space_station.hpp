@@ -70,12 +70,12 @@ namespace KSP_SM
             bool isActive();
             OrbitalParameters GetOrbitalDetails();
             SpaceStation() = default;
+            SpaceStation(string station_id);
             ~SpaceStation();
 
 
         private:
             friend class SpaceStationBuilder;
-            SpaceStation(string station_id);
             string m_station_id;
             string m_station_name = "Unknown Station";
             OrbitalParameters m_orbit_details = OrbitalParameters(100000, 100000);

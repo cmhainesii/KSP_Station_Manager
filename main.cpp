@@ -27,6 +27,7 @@ unsigned short readStationsFromFile(const string &filename, vector<station_uniq_
 station_uniq_ptr createStation();
 void listAllStations(const vector<station_uniq_ptr> &stations);
 void writeStationsToFile(const string &filename, json stations_json);
+bool deleteElementAtIndex(vector<station_uniq_ptr>& stations, std::size_t element);
 
 constexpr string STATIONS_FILENAME = "stations.json";
 
@@ -74,6 +75,35 @@ int main(int argc, char **argv)
         }
         if (buffer.compare("4") == 0)
         {
+            std::size_t station_index;
+            std::cout << std::endl;
+            std::cout << "Delete Station" << std::endl;
+            std::cout << "Enter Station List Index: ";
+            while(!(std::cin >> station_index))
+            {
+                std::cout << "Invalid Index" << std::endl;
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Enter Station List Index: ";
+
+            }
+            
+            if(deleteElementAtIndex(stations, station_index))
+            {
+                std::cout << fmt::format("Deleted station at index {}", station_index) << std::endl;
+            }
+            else
+            {
+                std::cout << "Invalid index / Station not found" << std::endl;
+            }
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+
+        }
+
+        if (buffer.compare("5") == 0)
+        {
             listAllStations(stations);
             continue;
         }
@@ -119,4 +149,14 @@ void writeStationsToFile(const string &filename, json stations_json)
     std::ofstream out_file(STATIONS_FILENAME);
     out_file << stations_json.dump(4) << std::endl;
     out_file.close(); // close file when done!
+}
+
+bool deleteElementAtIndex(vector<station_uniq_ptr>& stations, std::size_t element)
+{
+    if (element < stations.size() && element >= 0)
+    {
+        stations.erase(stations.begin() + element);
+        return true;
+    }
+    return false;
 }
