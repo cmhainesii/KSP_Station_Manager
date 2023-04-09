@@ -60,5 +60,67 @@
         "name": "Chester Golden National Space Station",
         "orbiting": 5,
         "periapsis": 320000
+    },
+    {
+        "active": false,
+        "apoapsis": 75000,
+        "capacity": 3,
+        "commsDevs": [
+            0,
+            0
+        ],
+        "dockingPorts": [
+            1,
+            1,
+            2,
+            2,
+            2
+        ],
+        "id": "CG-210X",
+        "kerbals": [
+            "Tom Kermin",
+            "Bob Kermin",
+            "Walter Kermin"
+        ],
+        "name": "Walter White",
+        "orbiting": 6,
+        "periapsis": 75000
+    },
+    {
+        "active": true,
+        "apoapsis": 150000,
+        "capacity": 12,
+        "commsDevs": [],
+        "dockingPorts": [],
+        "id": "CG-21",
+        "kerbals": [
+            "Bobby Jackson"
+        ],
+        "name": "Bob",
+        "orbiting": 5,
+        "periapsis": 150000
+    },
+    {
+        "active": false,
+        "apoapsis": 120000,
+        "capacity": 2,
+        "commsDevs": [
+            5,
+            5,
+            5,
+            5
+        ],
+        "dockingPorts": [
+            1,
+            1
+        ],
+        "id": "AGS-101",
+        "kerbals": [
+            "2",
+            "Chewy Kermin"
+        ],
+        "name": "Advance Station",
+        "orbiting": 5,
+        "periapsis": 120000
     }
 ]
