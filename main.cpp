@@ -19,7 +19,7 @@ using nlohmann::json;
 using std::vector;
 using namespace KSP_SM;
 
-typedef std::unique_ptr<SpaceStation> station_uniq_ptr;
+using station_uniq_ptr = std::unique_ptr<SpaceStation>;
 
 int main(int argc, char **argv);
 
@@ -29,7 +29,7 @@ void listAllStations(const vector<station_uniq_ptr> &stations);
 void writeStationsToFile(const string &filename, json stations_json);
 bool deleteElementAtIndex(vector<station_uniq_ptr>& stations, std::size_t element);
 
-constexpr string STATIONS_FILENAME = "stations.json";
+const string STATIONS_FILENAME = "stations.json";
 
 int main(int argc, char **argv)
 {

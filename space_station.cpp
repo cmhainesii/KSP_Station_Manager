@@ -35,8 +35,8 @@ namespace KSP_SM
         ss << "Station Name: " << m_station_name << endl;
         ss << fmt::format("Orbiting Planet: {}", Utility::PlanetToString(m_orbiting_body)) << endl;
         ss << "Orbit Details: " << endl;
-        ss << '\t' << " Apoapsis: " << m_orbit_details.apoapsis << endl;
-        ss << '\t' << "Periapsis: " << m_orbit_details.periapsis << endl;
+        ss << fmt::format("\t Apoapsis: {} meters\n", Utility::numberWithCommas(m_orbit_details.apoapsis));
+        ss << fmt::format("\tPeriapsis: {} meters\n", Utility::numberWithCommas(m_orbit_details.periapsis));
         ss << fmt::format("Capacity: {} kerbals", m_capacity) << endl;
         ss << fmt::format("Station Currently Active: {}", Utility::BoolToYesNo(m_active)) << endl;
         if (m_comms_devices.size() > 0)

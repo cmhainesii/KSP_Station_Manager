@@ -5,6 +5,17 @@ string Utility::BoolToYesNo(bool input)
     return input ? "Yes" : "No";
 }
 
+string Utility::numberWithCommas(size_t input)
+{
+    string result = std::to_string(input);
+    for (auto i = result.size() - 3; i > 0; i -=3)
+    {
+        result.insert(i, ",");
+    }
+
+    return result;
+}
+
 string Utility::PlanetToString(CelestialBody planet)
 {
     switch(planet)
