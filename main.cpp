@@ -12,6 +12,7 @@
 #include "include/space_station.hpp"
 #include "include/menu.hpp"
 #include "include/celestial_body.hpp"
+#include "include/build_vars.h"
 using SpaceStation = KSP_SM::SpaceStationBuilder::SpaceStation;
 using SpaceStationBuilder = KSP_SM::SpaceStationBuilder;
 
@@ -38,6 +39,9 @@ int main(int argc, char **argv)
     bool exitProgram = false;
     std::string buffer;
     std::string menuText = Menu::getMenuText();
+
+    std::cout << "KSP Station Manger\n";
+    std::cout << fmt::format("Verson: {}.{}\n", KSP_SM_VERSION_MAJOR, KSP_SM_VERSION_MINOR);
 
     while (!exitProgram)
     {

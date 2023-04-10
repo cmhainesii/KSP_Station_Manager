@@ -1,0 +1,2 @@
+#define KSP_SM_VERSION_MAJOR @KSP_Station_Manager_VERSION_MAJOR@
+#define KSP_SM_VERSION_MINOR @KSP_Station_Manager_VERSION_MINOR@
