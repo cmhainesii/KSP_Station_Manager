@@ -25,7 +25,7 @@ using station_uniq_ptr = std::unique_ptr<SpaceStation>;
 
 int main(int argc, char **argv);
 
-unsigned short readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations);
+std::size_t readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations);
 station_uniq_ptr createStation();
 void listAllStations(const vector<station_uniq_ptr> &stations);
 void writeStationsToFile(const string &filename, json stations_json);
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-unsigned short readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations)
+std::size_t readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations)
 {
     std::ifstream in_file(filename);
     if (!in_file)
