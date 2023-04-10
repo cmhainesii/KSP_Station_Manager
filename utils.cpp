@@ -1,4 +1,7 @@
 #include "include/utils.hpp"
+#include <sstream>
+
+using namespace KSP_SM;
 
 string Utility::BoolToYesNo(bool input)
 {
@@ -62,4 +65,48 @@ string Utility::PlanetToString(CelestialBody planet)
     default:
         return "Vulkin";
     }
+}
+
+string Utility::PrettyFormatList(const vector<KSP_SM::CommunicationDevice>& list)
+{
+    size_t i = 0;
+    std::stringstream ss;
+    char tab = '\t';
+
+    for (auto current : list)
+    {
+        ss << tab << KSP_SM::SpaceStationBuilder::SpaceStation::CommsDeviceToString(current);
+        if(++i % 4 == 0)
+        {
+            ss << '\n';
+        }
+    }
+    if (i % 4 != 0)
+    {
+        ss << '\n';
+    }
+
+    return ss.str();
+}
+
+string Utility::PrettyFormatList(const vector<DockingPort>& list)
+{
+    size_t i = 0;
+    std::stringstream ss;
+    char tab = '\t';
+
+    for (auto current : list)
+    {
+        ss << tab << SpaceStationBuilder::SpaceStation::DockingPortToString(current);
+        if (++i % 4 == 0)
+        {
+            ss << '\n';
+        }
+    }
+    if (i % 4 != 0)
+    {
+        ss << '\n';
+    }
+
+    return ss.str();
 }

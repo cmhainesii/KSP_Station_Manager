@@ -61,16 +61,16 @@ namespace KSP_SM
         {
 
         public:
-            string ToString();
+            string ToString() const;
             static string DockingPortToString(DockingPort port);
             static string CommsDeviceToString(CommunicationDevice dev);
-            string GetName();
-            string GetStationID();
-            size_t GetCapacity();
-            bool isActive();
-            OrbitalParameters GetOrbitalDetails();
+            string GetName() const;
+            string GetStationID() const;
+            size_t GetCapacity() const;
+            bool isActive() const;
+            OrbitalParameters GetOrbitalDetails() const;
             SpaceStation() = default;
-            SpaceStation(string station_id);
+            SpaceStation(string station_id) noexcept;
             ~SpaceStation();
 
 

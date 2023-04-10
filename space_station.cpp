@@ -13,7 +13,7 @@ using std::stringstream;
 namespace KSP_SM
 {
 
-    SpaceStation::SpaceStation(string station_id)
+    SpaceStation::SpaceStation(string station_id) noexcept
     {
         this->m_station_id = station_id;
     }
@@ -24,7 +24,7 @@ namespace KSP_SM
         //std::unique_ptr<SpaceStation>(new SpaceStation(station_id));
     }
 
-    string SpaceStation::ToString()
+    string SpaceStation::ToString() const
     {
         stringstream ss;
         string tab = "\t";
@@ -39,29 +39,39 @@ namespace KSP_SM
         ss << fmt::format("\tPeriapsis: {} meters\n", Utility::numberWithCommas(m_orbit_details.periapsis));
         ss << fmt::format("Capacity: {} kerbals", m_capacity) << endl;
         ss << fmt::format("Station Currently Active: {}", Utility::BoolToYesNo(m_active)) << endl;
+
+        ss << "Communication Equipment: \n";
         if (m_comms_devices.size() > 0)
         {
-            ss << "Communication Equipment: " << endl;
-            for (auto current : m_comms_devices)
-            {
-                ss << fmt::format("{}{}", tab, SpaceStation::CommsDeviceToString(current)) << endl;
-            }
+            
+            ss << Utility::PrettyFormatList(m_comms_devices);
         }
+        else {
+            ss << tab << "No communications equipment installed.\n";
+        }
+
+        ss << "Docking Ports Installed: \n"; 
         if (m_docking_ports.size() > 0)
         {
-            ss << "Docking Ports: " << endl;
-            for (auto current : m_docking_ports)
-            {
-                ss << fmt::format("{}{}", tab, SpaceStation::DockingPortToString(current)) << endl;
-            }
+           
+           ss << Utility::PrettyFormatList(m_docking_ports);
         }
+        else {
+            ss << tab << "No docking ports installed.\n";
+        }
+
+        ss << "Kerbals Present: " << endl;
         if (m_kerbals.size() > 0)
         {
-            ss << "Kerbals Present: " << endl;
+            
             for (auto current : m_kerbals)
             {
                 ss << fmt::format("{}{}", tab, current) << endl;
             }
+        }
+        else
+        {
+            ss << tab << "No kerbals currently onboard.\n";
         }
 
         return ss.str();
@@ -208,27 +218,27 @@ namespace KSP_SM
         return output + dp;
     }
 
-    string SpaceStation::GetName()
+    string SpaceStation::GetName() const
     {
         return m_station_name;
     }
 
-    string SpaceStation::GetStationID()
+    string SpaceStation::GetStationID() const
     {
         return m_station_id;
     }
 
-    size_t SpaceStation::GetCapacity()
+    size_t SpaceStation::GetCapacity() const
     {
         return m_capacity;
     }
 
-    bool SpaceStation::isActive()
+    bool SpaceStation::isActive() const
     {
         return m_active;
     }
 
-    OrbitalParameters SpaceStation::GetOrbitalDetails()
+    OrbitalParameters SpaceStation::GetOrbitalDetails() const
     {
         return m_orbit_details;
     }

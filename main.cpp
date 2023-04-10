@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <limits>
 #include <ios>
@@ -35,6 +36,26 @@ const string STATIONS_FILENAME = "stations.json";
 int main(int argc, char **argv)
 {
 
+    if (argc > 1) 
+    {
+        // Running in non-interactive mode!
+        if (std::strcmp(argv[1], "-i") == 0)
+        {
+            vector<station_uniq_ptr> stations;
+            readStationsFromFile(STATIONS_FILENAME, stations);
+            
+            std::ofstream out_file("stations.txt");
+            for (const auto& current : stations)
+            {
+                out_file << current->ToString();
+                out_file.close();
+            }
+            
+        }
+
+        return 0;
+    }
+
     vector<station_uniq_ptr> stations;
     bool exitProgram = false;
     std::string buffer;
@@ -45,11 +66,14 @@ int main(int argc, char **argv)
 
     while (!exitProgram)
     {
+
+
         std::cout << std::endl;
         std::cout << menuText;
         std::cout << "Enter Your Selection: ";
         std::cin >> buffer;
-        if (buffer.compare("1") == 0)
+        char selection = std::tolower(buffer.at(0));
+        if (selection == 'r')
         {
             // Attempt to read stations from file. Result is the number of stations read from json file.
             auto number_of_stations = readStationsFromFile(STATIONS_FILENAME, stations);
@@ -62,7 +86,7 @@ int main(int argc, char **argv)
             std::cout << fmt::format("Read in {} stations from file {}.", stations.size(), STATIONS_FILENAME) << std::endl;
             continue;
         }
-        if (buffer.compare("2") == 0)
+        if (selection == 'w')
         {
             json stations_json = stations;
             writeStationsToFile(STATIONS_FILENAME, stations_json);
@@ -71,13 +95,13 @@ int main(int argc, char **argv)
                       << std::endl;
             continue;
         }
-        if (buffer.compare("3") == 0)
+        if (selection == 'a')
         {
             auto newStation = SpaceStationBuilder::createStationFromConsoleInput();
             stations.push_back(std::move(newStation));
             continue;
         }
-        if (buffer.compare("4") == 0)
+        if (selection == 'd')
         {
             std::size_t station_index;
             std::cout << std::endl;
@@ -106,7 +130,7 @@ int main(int argc, char **argv)
 
         }
 
-        if (buffer.compare("5") == 0)
+        if (selection == 'l')
         {
             listAllStations(stations);
             continue;

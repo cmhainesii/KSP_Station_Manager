@@ -7,12 +7,12 @@ string Menu::getMenuText()
 
     ss << "Main Menu" << std::endl << std::endl;
 
-    ss << "1) Load Stations from Disk" << std::endl;
-    ss << "2) Write Stations to Disk" << std::endl;
-    ss << "3) Add New Station" << std::endl;
-    ss << "4) Delete Station" << std::endl;
-    ss << "5) List All Stations" << std::endl;
-    ss << "q) Quit" << std::endl << std::endl;
+    ss << "R -> Read Stations from Disk" << std::endl;
+    ss << "W -> Write Stations to Disk" << std::endl;
+    ss << "A -> Add New Station" << std::endl;
+    ss << "D -> Delete Station" << std::endl;
+    ss << "L -> List All Stations" << std::endl;
+    ss << "Q -> Quit" << std::endl << std::endl;
 
     return ss.str();
 }
