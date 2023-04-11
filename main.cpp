@@ -14,6 +14,8 @@
 #include "include/menu.hpp"
 #include "include/celestial_body.hpp"
 #include "include/build_vars.h"
+#include "include/station_list.hpp"
+
 using SpaceStation = KSP_SM::SpaceStationBuilder::SpaceStation;
 using SpaceStationBuilder = KSP_SM::SpaceStationBuilder;
 
@@ -21,15 +23,11 @@ using nlohmann::json;
 using std::vector;
 using namespace KSP_SM;
 
-using station_uniq_ptr = std::unique_ptr<SpaceStation>;
+using unique_station = std::unique_ptr<SpaceStation>;
 
 int main(int argc, char **argv);
 
-std::size_t readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations);
-station_uniq_ptr createStation();
-void listAllStations(const vector<station_uniq_ptr> &stations);
-void writeStationsToFile(const string &filename, json stations_json);
-bool deleteElementAtIndex(vector<station_uniq_ptr>& stations, std::size_t element);
+
 
 const string STATIONS_FILENAME = "stations.json";
 
@@ -41,11 +39,12 @@ int main(int argc, char **argv)
         // Running in non-interactive mode!
         if (std::strcmp(argv[1], "-i") == 0)
         {
-            vector<station_uniq_ptr> stations;
-            readStationsFromFile(STATIONS_FILENAME, stations);
+            StationList stations;
+
+            
             
             std::ofstream out_file("stations.txt");
-            for (const auto& current : stations)
+            for (const auto& current : stations.GetStations())
             {
                 out_file << current->ToString();
                 out_file.close();
@@ -56,7 +55,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    vector<station_uniq_ptr> stations;
+    StationList stations;
     bool exitProgram = false;
     std::string buffer;
     std::string menuText = Menu::getMenuText();
@@ -76,20 +75,19 @@ int main(int argc, char **argv)
         if (selection == 'r')
         {
             // Attempt to read stations from file. Result is the number of stations read from json file.
-            auto number_of_stations = readStationsFromFile(STATIONS_FILENAME, stations);
+            auto number_of_stations = stations.ReadStationsFromFile(STATIONS_FILENAME);
             if (!number_of_stations) // Show an error if no stations are found / file not found.
             {
                 std::cerr << "Aborting." << std::endl;
                 continue;
             }
             // Successful load, print number of stations loaded and go back to the main menu.
-            std::cout << fmt::format("Read in {} stations from file {}.", stations.size(), STATIONS_FILENAME) << std::endl;
+            std::cout << fmt::format("Read in {} stations from file {}.", stations.GetSize(), STATIONS_FILENAME) << std::endl;
             continue;
         }
         if (selection == 'w')
         {
-            json stations_json = stations;
-            writeStationsToFile(STATIONS_FILENAME, stations_json);
+            stations.WriteStationsToFile(STATIONS_FILENAME);
 
             std::cout << "Wrote stations list to file." << std::endl
                       << std::endl;
@@ -98,7 +96,7 @@ int main(int argc, char **argv)
         if (selection == 'a')
         {
             auto newStation = SpaceStationBuilder::createStationFromConsoleInput();
-            stations.push_back(std::move(newStation));
+            stations.AddStation(newStation);
             continue;
         }
         if (selection == 'd')
@@ -116,7 +114,7 @@ int main(int argc, char **argv)
 
             }
             
-            if(deleteElementAtIndex(stations, station_index))
+            if(stations.DeleteStation(station_index))
             {
                 std::cout << fmt::format("Deleted station at index {}", station_index) << std::endl;
             }
@@ -132,7 +130,7 @@ int main(int argc, char **argv)
 
         if (selection == 'l')
         {
-            listAllStations(stations);
+            stations.ListAllStations();
             continue;
         }
         if (buffer.compare("q") == 0)
@@ -147,44 +145,8 @@ int main(int argc, char **argv)
     return 0;
 }
 
-std::size_t readStationsFromFile(const string &filename, vector<station_uniq_ptr> &stations)
-{
-    std::ifstream in_file(filename);
-    if (!in_file)
-    {
-        std::cerr << fmt::format("Error: {} not found.", filename) << std::endl;
-        return 0;
-    }
-    json j;
-    in_file >> j;
-    in_file.close(); // close file when done!
 
-    stations.clear();                             // clear stations vector prior to loading stations from json
-    stations = j.get<vector<station_uniq_ptr>>(); // convert json to vector of unique_ptrs to json
-    return stations.size();
-}
 
-void listAllStations(const vector<station_uniq_ptr> &stations)
-{
-    for (auto i = 0; i < stations.size(); ++i)
-    {
-        std::cout << fmt::format("{}) {}", i, stations.at(i)->ToString()) << std::endl;
-    }
-}
 
-void writeStationsToFile(const string &filename, json stations_json)
-{
-    std::ofstream out_file(STATIONS_FILENAME);
-    out_file << stations_json.dump(4) << std::endl;
-    out_file.close(); // close file when done!
-}
 
-bool deleteElementAtIndex(vector<station_uniq_ptr>& stations, std::size_t element)
-{
-    if (element < stations.size() && element >= 0)
-    {
-        stations.erase(stations.begin() + element);
-        return true;
-    }
-    return false;
-}
+
