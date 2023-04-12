@@ -111,7 +111,6 @@ namespace KSP_SM
             OrbitalParameters m_orbit_details = OrbitalParameters(100000, 100000);
             size_t m_capacity = 3;
             bool m_active = true;
-            vector<CommunicationDevice> m_comms_devices;
             CommsDevCount m_comms_dev_quantities;
             DockingPortCount m_port_quantities;
             vector<string> m_kerbals;
@@ -128,9 +127,6 @@ namespace KSP_SM
         SpaceStationBuilder& SetOrbitDetails(size_t apoapsis, size_t periapsis);
         SpaceStationBuilder& SetCapacity(size_t capacity);
         SpaceStationBuilder& SetActive(bool is_active);
-        SpaceStationBuilder& AddCommsDevice(CommunicationDevice dev);
-        SpaceStationBuilder& AddCommsDevices(size_t quantity, CommunicationDevice dev);
-        SpaceStationBuilder& AddCommsDevices(vector<CommunicationDevice> devs);
         SpaceStationBuilder& AddKerbal(string kerbal_name);
         SpaceStationBuilder& AddKerbals(const vector<string>& kerbals);
         SpaceStationBuilder& SetDockingPortQuantities(const DockingPortCount& quantities);

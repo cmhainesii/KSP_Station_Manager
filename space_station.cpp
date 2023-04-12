@@ -72,16 +72,7 @@ namespace KSP_SM
         ss << fmt::format("Capacity: {} kerbals", m_capacity) << endl;
         ss << fmt::format("Station Currently Active: {}", Utility::BoolToYesNo(m_active)) << endl;
 
-        ss << "Communication Equipment: \n";
-        if (m_comms_devices.size() > 0)
-        {
-            
-            ss << Utility::PrettyFormatList(m_comms_devices);
-        }
-        else {
-            ss << tab << "No communications equipment installed.\n";
-        }
-
+        ss << "Communication Equipment: \n\n";
         ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16), m_comms_dev_quantities.C16);
         ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16S), m_comms_dev_quantities.C16S);
         ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_88_88), m_comms_dev_quantities.C8888);
@@ -92,7 +83,7 @@ namespace KSP_SM
         ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_15), m_comms_dev_quantities.RA15);
         ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_2), m_comms_dev_quantities.RA2);
 
-        ss << "Docking Ports Installed: \n";
+        ss << "Docking Ports Installed: \n\n";
         ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XSMALL) ,m_port_quantities.xs);
         ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::SMALL) , m_port_quantities.sm);
         ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::MEDIUM) ,m_port_quantities.md);
@@ -147,21 +138,6 @@ namespace KSP_SM
     SpaceStationBuilder &SpaceStationBuilder::SetActive(bool active)
     {
         m_space_station->m_active = active;
-        return *this;
-    }
-
-    SpaceStationBuilder &SpaceStationBuilder::AddCommsDevice(CommunicationDevice dev)
-    {
-        m_space_station->m_comms_devices.push_back(dev);
-        return *this;
-    }
-
-    SpaceStationBuilder &SpaceStationBuilder::AddCommsDevices(size_t quantity, CommunicationDevice dev)
-    {
-        for (auto i = 0; i < quantity; ++i)
-        {
-            m_space_station->m_comms_devices.push_back(dev);
-        }
         return *this;
     }
 
@@ -282,7 +258,7 @@ namespace KSP_SM
     {
         j = json{{"id", ss.m_station_id}, {"name", ss.m_station_name},
                 {"active", ss.m_active},
-                {"capacity", ss.m_capacity}, {"commsDevs", ss.m_comms_devices},
+                {"capacity", ss.m_capacity},
                 {"kerbals", ss.m_kerbals}, {"apoapsis", ss.m_orbit_details.apoapsis},
                 {"periapsis", ss.m_orbit_details.periapsis}, {"orbiting", ss.m_orbiting_body},
                 {"port_quan_xs", ss.m_port_quantities.xs}, {"port_quan_sm", ss.m_port_quantities.sm},
@@ -302,7 +278,7 @@ namespace KSP_SM
     {
         j = json{{"id", ss->m_station_id}, {"name", ss->m_station_name},
                 {"active", ss->m_active},
-                {"capacity", ss->m_capacity}, {"commsDevs", ss->m_comms_devices},
+                {"capacity", ss->m_capacity},
                 {"kerbals", ss->m_kerbals}, {"apoapsis", ss->m_orbit_details.apoapsis},
                 {"periapsis", ss->m_orbit_details.periapsis}, {"orbiting", ss->m_orbiting_body},
                 {"port_quan_xs", ss->m_port_quantities.xs}, {"port_quan_sm", ss->m_port_quantities.sm},
@@ -323,7 +299,6 @@ namespace KSP_SM
         j.at("name").get_to(ss->m_station_name);
         j.at("active").get_to(ss->m_active);
         j.at("capacity").get_to(ss->m_capacity);
-        j.at("commsDevs").get_to(ss->m_comms_devices);
         j.at("apoapsis").get_to(ss->m_orbit_details.apoapsis);
         j.at("periapsis").get_to(ss->m_orbit_details.periapsis);
         j.at("orbiting").get_to(ss->m_orbiting_body);
@@ -352,7 +327,6 @@ namespace KSP_SM
         j.at("name").get_to(ss.m_station_name);
         j.at("active").get_to(ss.m_active);
         j.at("capacity").get_to(ss.m_capacity);
-        j.at("commsDevs").get_to(ss.m_comms_devices);
         j.at("apoapsis").get_to(ss.m_orbit_details.apoapsis);
         j.at("periapsis").get_to(ss.m_orbit_details.periapsis);
         j.at("orbiting").get_to(ss.m_orbiting_body);
@@ -390,12 +364,6 @@ namespace KSP_SM
         return *this;
     }
 
-    SpaceStationBuilder& SpaceStationBuilder::AddCommsDevices(vector<CommunicationDevice> devs)
-    {
-        m_space_station->m_comms_devices = devs;
-        return *this;
-    }
-
     std::unique_ptr<SpaceStation> SpaceStationBuilder::createStationFromConsoleInput()
     {
         bool validInput = false;
@@ -407,7 +375,6 @@ namespace KSP_SM
         CommsDevCount comms_dev_quantities;
         std::array<std::size_t, 5> port_builder {};
         std::array<std::size_t, 9> comms_builder {};
-        vector<CommunicationDevice> comms_devs;
         vector<string> kerbals;
         size_t capacity;
         bool active;
@@ -611,30 +578,63 @@ namespace KSP_SM
 
         }
 
-        std::cout << "Enter Station Apoapsis: ";
-        while (!(std::cin >> params.apoapsis))
+
+
+        validInput = false;
+        while(!validInput)
         {
-            std::cout << "Invalid Response. Response must be an integer" << std::endl;
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            bool thousand = false;
             std::cout << "Enter Station Apoapsis: ";
+            std::getline(std::cin, buffer);
+
+            if(buffer.size() > 0 && std::tolower(buffer.at(buffer.size() - 1)) == 'k')
+            {
+                thousand = true;
+            }
+
+            try {
+                params.apoapsis = std::stoi(buffer);
+                if(thousand)
+                {
+                    params.apoapsis *= 1000;
+                }
+                validInput = true;
+            }
+            catch (std::invalid_argument& e) {
+                std::cout << "Invalid Response\n";
+                continue;
+            }
+
         }
 
-        // Clear the input buffer
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        std::cout << "Enter Station Periapsis: ";
-        while (!(std::cin >> params.periapsis))
+        validInput = false;
+        while(!validInput)
         {
-            std::cout << "Invalid Response. Response must be an integer" << std::endl;
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            bool thousand = false;
             std::cout << "Enter Station Periapsis: ";
-        }
+            std::getline(std::cin, buffer);
 
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if(buffer.size() > 0 && std::tolower(buffer.at(buffer.size() - 1)) == 'k')
+            {
+                thousand = true;
+            }
+
+            try {
+                params.periapsis = std::stoi(buffer);
+                if (thousand)
+                {
+                    params.periapsis *= 1000;
+                }
+                validInput = true;
+            }
+            catch (std::invalid_argument& e)
+            {
+                std::cout << "Invalid Response\n";
+                continue;
+            }
+        }
+        
 
         std::cout << "AP: " << Utility::numberWithCommas(params.apoapsis) << std::endl;
         std::cout << "PE: " << Utility::numberWithCommas(params.periapsis) << std::endl;
@@ -804,20 +804,10 @@ namespace KSP_SM
                 std::cout << "Enter Quanity of Selected Communication Device: ";
             }
 
-            for(auto i = 0; i < quantity; ++i)
-            {
-                comms_devs.push_back(selectedDevice);
-            }
-
             comms_builder.at(static_cast<int>(selectedDevice)) = quantity;
         }
 
         comms_dev_quantities = CommsDevCount(comms_builder);
-
-        for (const auto& current : comms_devs)
-        {
-            std::cout << SpaceStation::CommsDeviceToString(current) << std::endl;
-        }
 
         doneEnteringList = false;
 
@@ -849,7 +839,6 @@ namespace KSP_SM
             .SetActive(active)
             .SetOrbitDetails(params)
             .SetOrbitingBody(orbiting)
-            .AddCommsDevices(comms_devs)
             .SetDockingPortQuantities(port_quantities)
             .SetCommsDevicesQuantities(comms_dev_quantities)
             .AddKerbals(kerbals)
