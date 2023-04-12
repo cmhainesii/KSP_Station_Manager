@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <array>
 
 #include "celestial_body.hpp"
 
@@ -27,6 +28,19 @@ namespace KSP_SM
         OrbitalParameters() = default;
 
         OrbitalParameters(size_t ap, size_t pe);
+    };
+
+    struct DockingPortCount {
+
+        std::size_t xs {};
+        std::size_t sm {};
+        std::size_t md {};
+        std::size_t lg {};
+        std::size_t xl {};
+
+      public:
+        DockingPortCount() = default;
+        DockingPortCount(std::array<std::size_t,5> counts);
     };
 
     enum class CommunicationDevice
@@ -82,7 +96,7 @@ namespace KSP_SM
             size_t m_capacity = 3;
             bool m_active = true;
             vector<CommunicationDevice> m_comms_devices;
-            vector<DockingPort> m_docking_ports;
+            DockingPortCount m_port_quantities;
             vector<string> m_kerbals;
             CelestialBody m_orbiting_body = CelestialBody::KERBIN;
             std::unique_ptr<SpaceStation> build();
@@ -100,11 +114,9 @@ namespace KSP_SM
         SpaceStationBuilder& AddCommsDevice(CommunicationDevice dev);
         SpaceStationBuilder& AddCommsDevices(size_t quantity, CommunicationDevice dev);
         SpaceStationBuilder& AddCommsDevices(vector<CommunicationDevice> devs);
-        SpaceStationBuilder& AddDockingPort(DockingPort port);
-        SpaceStationBuilder& AddDockingPorts(size_t quantity, DockingPort port);
-        SpaceStationBuilder& AddDockingPorts(vector<DockingPort> ports);
         SpaceStationBuilder& AddKerbal(string kerbal_name);
-        SpaceStationBuilder& AddKerbals(vector<string> kerbals);
+        SpaceStationBuilder& AddKerbals(const vector<string>& kerbals);
+        SpaceStationBuilder& SetDockingPortQuantities(const DockingPortCount& quantities);
         SpaceStationBuilder& SetOrbitingBody(CelestialBody planet);
         std::unique_ptr<SpaceStation> build();
         static std::unique_ptr<SpaceStation> createStationFromConsoleInput();

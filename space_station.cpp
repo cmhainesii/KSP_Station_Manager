@@ -2,6 +2,7 @@
 #include "include/utils.hpp"
 #include <sstream>
 #include <iostream>
+#include <string>
 #include <fmt/core.h>
 
 using SpaceStation = KSP_SM::SpaceStationBuilder::SpaceStation;
@@ -22,6 +23,15 @@ namespace KSP_SM
     {
         this->m_space_station = std::make_unique<KSP_SM::SpaceStationBuilder::SpaceStation>(station_id);
         //std::unique_ptr<SpaceStation>(new SpaceStation(station_id));
+    }
+
+    KSP_SM::DockingPortCount::DockingPortCount(std::array<std::size_t, 5> counts)
+    {
+        this->xs = counts.at(0);
+        this->sm = counts.at(1);
+        this->md = counts.at(2);
+        this->lg = counts.at(3);
+        this->xl = counts.at(4);
     }
 
     string SpaceStation::ToString() const
@@ -50,15 +60,12 @@ namespace KSP_SM
             ss << tab << "No communications equipment installed.\n";
         }
 
-        ss << "Docking Ports Installed: \n"; 
-        if (m_docking_ports.size() > 0)
-        {
-           
-           ss << Utility::PrettyFormatList(m_docking_ports);
-        }
-        else {
-            ss << tab << "No docking ports installed.\n";
-        }
+        ss << "Docking Ports Installed: \n";
+        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XSMALL) ,m_port_quantities.xs);
+        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::SMALL) , m_port_quantities.sm);
+        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::MEDIUM) ,m_port_quantities.md);
+        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::LARGE) ,m_port_quantities.lg);
+        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XLARGE) ,m_port_quantities.xl);
 
         ss << "Kerbals Present: " << endl;
         if (m_kerbals.size() > 0)
@@ -126,22 +133,6 @@ namespace KSP_SM
         return *this;
     }
 
-    SpaceStationBuilder &SpaceStationBuilder::AddDockingPort(DockingPort port)
-    {
-        m_space_station->m_docking_ports.push_back(port);
-        return *this;
-    }
-
-    SpaceStationBuilder &SpaceStationBuilder::AddDockingPorts(size_t quantity, DockingPort port)
-    {
-        for (auto i = 0; i < quantity; i++)
-        {
-            m_space_station->m_docking_ports.push_back(port);
-        }
-
-        return *this;
-    }
-
     SpaceStationBuilder &SpaceStationBuilder::AddKerbal(string name)
     {
         if (!name.empty())
@@ -155,6 +146,12 @@ namespace KSP_SM
     SpaceStationBuilder &SpaceStationBuilder::SetOrbitingBody(CelestialBody planet)
     {
         m_space_station->m_orbiting_body = planet;
+        return *this;
+    }
+
+    SpaceStationBuilder& SpaceStationBuilder::SetDockingPortQuantities(const DockingPortCount& quantities)
+    {
+        this->m_space_station->m_port_quantities = quantities;
         return *this;
     }
 
@@ -246,20 +243,29 @@ namespace KSP_SM
     void to_json(json& j, const SpaceStation& ss)
     {
         j = json{{"id", ss.m_station_id}, {"name", ss.m_station_name},
-                {"active", ss.m_active}, {"dockingPorts", ss.m_docking_ports},
+                {"active", ss.m_active},
                 {"capacity", ss.m_capacity}, {"commsDevs", ss.m_comms_devices},
                 {"kerbals", ss.m_kerbals}, {"apoapsis", ss.m_orbit_details.apoapsis},
-                {"periapsis", ss.m_orbit_details.periapsis}, {"orbiting", ss.m_orbiting_body}};
+                {"periapsis", ss.m_orbit_details.periapsis}, {"orbiting", ss.m_orbiting_body},
+                {"port_quan_xs", ss.m_port_quantities.xs}, {"port_quan_sm", ss.m_port_quantities.sm},
+                {"port_quan_md", ss.m_port_quantities.md}, {"port_quan_lg", ss.m_port_quantities.lg},
+                {"port_quan_xl", ss.m_port_quantities.xl}
+                };
+
     
     }
 
     void to_json(json& j, const std::unique_ptr<SpaceStation>& ss)
     {
         j = json{{"id", ss->m_station_id}, {"name", ss->m_station_name},
-                {"active", ss->m_active}, {"dockingPorts", ss->m_docking_ports},
+                {"active", ss->m_active},
                 {"capacity", ss->m_capacity}, {"commsDevs", ss->m_comms_devices},
                 {"kerbals", ss->m_kerbals}, {"apoapsis", ss->m_orbit_details.apoapsis},
-                {"periapsis", ss->m_orbit_details.periapsis}, {"orbiting", ss->m_orbiting_body}};
+                {"periapsis", ss->m_orbit_details.periapsis}, {"orbiting", ss->m_orbiting_body},
+                {"port_quan_xs", ss->m_port_quantities.xs}, {"port_quan_sm", ss->m_port_quantities.sm},
+                {"port_quan_md", ss->m_port_quantities.md}, {"port_quan_lg", ss->m_port_quantities.lg},
+                {"port_quan_xl", ss->m_port_quantities.xl}
+                };
 
     }
 
@@ -269,13 +275,17 @@ namespace KSP_SM
         j.at("id").get_to(ss->m_station_id);
         j.at("name").get_to(ss->m_station_name);
         j.at("active").get_to(ss->m_active);
-        j.at("dockingPorts").get_to(ss->m_docking_ports);
         j.at("capacity").get_to(ss->m_capacity);
         j.at("commsDevs").get_to(ss->m_comms_devices);
         j.at("apoapsis").get_to(ss->m_orbit_details.apoapsis);
         j.at("periapsis").get_to(ss->m_orbit_details.periapsis);
         j.at("orbiting").get_to(ss->m_orbiting_body);
         j.at("kerbals").get_to(ss->m_kerbals);
+        j.at("port_quan_xs").get_to(ss->m_port_quantities.xs);
+        j.at("port_quan_sm").get_to(ss->m_port_quantities.sm);
+        j.at("port_quan_md").get_to(ss->m_port_quantities.md);
+        j.at("port_quan_lg").get_to(ss->m_port_quantities.lg);
+        j.at("port_quan_xl").get_to(ss->m_port_quantities.xl);
     }
 
     void from_json(const json& j, SpaceStation& ss)
@@ -283,13 +293,17 @@ namespace KSP_SM
         j.at("id").get_to(ss.m_station_id);
         j.at("name").get_to(ss.m_station_name);
         j.at("active").get_to(ss.m_active);
-        j.at("dockingPorts").get_to(ss.m_docking_ports);
         j.at("capacity").get_to(ss.m_capacity);
         j.at("commsDevs").get_to(ss.m_comms_devices);
         j.at("apoapsis").get_to(ss.m_orbit_details.apoapsis);
         j.at("periapsis").get_to(ss.m_orbit_details.periapsis);
         j.at("orbiting").get_to(ss.m_orbiting_body);
         j.at("kerbals").get_to(ss.m_kerbals);
+        j.at("port_quan_xs").get_to(ss.m_port_quantities.xs);
+        j.at("port_quan_sm").get_to(ss.m_port_quantities.sm);
+        j.at("port_quan_md").get_to(ss.m_port_quantities.md);
+        j.at("port_quan_lg").get_to(ss.m_port_quantities.lg);
+        j.at("port_quan_xl").get_to(ss.m_port_quantities.xl);
     }
 
     OrbitalParameters::OrbitalParameters(size_t ap, size_t pe)
@@ -303,13 +317,7 @@ namespace KSP_SM
         std::cout << "I'm being deleted!" << std::endl;
     }
 
-    SpaceStationBuilder& SpaceStationBuilder::AddDockingPorts(vector<DockingPort> ports)
-    {
-        m_space_station->m_docking_ports = ports;
-        return *this;
-    }
-
-    SpaceStationBuilder& SpaceStationBuilder::AddKerbals(vector<string> kerbals)
+    SpaceStationBuilder& SpaceStationBuilder::AddKerbals(const vector<string>& kerbals)
     {
         m_space_station->m_kerbals = kerbals;
         return *this;
@@ -328,7 +336,8 @@ namespace KSP_SM
         string buffer;
         string station_id;
         string station_name;
-        vector<DockingPort> docking_ports;
+        DockingPortCount port_quantities;
+        std::array<std::size_t, 5> port_builder {};
         vector<CommunicationDevice> comms_devs;
         vector<string> kerbals;
         size_t capacity;
@@ -410,35 +419,11 @@ namespace KSP_SM
             std::cout << "Invalid Response" << std::endl;
         }
 
-        std::cout << "Enter Station Apoapsis: ";
-        while (!(std::cin >> params.apoapsis))
-        {
-            std::cout << "Invalid Response. Response must be an integer" << std::endl;
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Enter Station Apoapsis: ";
-        }
-
-        // Clear the input buffer
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Enter Station Periapsis: ";
-        while (!(std::cin >> params.periapsis))
-        {
-            std::cout << "Invalid Response. Response must be an integer" << std::endl;
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Enter Station Periapsis: ";
-        }
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "AP: " << params.apoapsis << std::endl;
-        std::cout << "PE: " << params.periapsis << std::endl;
-
         validInput = false;
+
+        // Clear input buffer!
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         while(!validInput)
         {
@@ -557,10 +542,43 @@ namespace KSP_SM
 
         }
 
+        std::cout << "Enter Station Apoapsis: ";
+        while (!(std::cin >> params.apoapsis))
+        {
+            std::cout << "Invalid Response. Response must be an integer" << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Enter Station Apoapsis: ";
+        }
+
+        // Clear the input buffer
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::cout << "Enter Station Periapsis: ";
+        while (!(std::cin >> params.periapsis))
+        {
+            std::cout << "Invalid Response. Response must be an integer" << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Enter Station Periapsis: ";
+        }
+
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::cout << "AP: " << Utility::numberWithCommas(params.apoapsis) << std::endl;
+        std::cout << "PE: " << Utility::numberWithCommas(params.periapsis) << std::endl;
+
+        validInput = false;
+
+        // here
+
         validInput = false;
         char selection;
         DockingPort selectedDp;
         int quantity = 0;
+
 
         while(!doneEnteringList)
         {
@@ -616,17 +634,24 @@ namespace KSP_SM
             }
             for(auto i = 0; i < quantity; ++i)
             {
-                docking_ports.push_back(selectedDp);
+                port_builder.at(static_cast<int>(selectedDp)) = quantity;
             }
 
 
             
         }
 
-        for(auto current : docking_ports)
-        {
-            std::cout << SpaceStation::DockingPortToString(current) << std::endl;
-        }
+        
+
+        port_quantities = DockingPortCount(port_builder);
+
+        std::cout << "Quantities:\n";
+        std::cout << fmt::format("XS: {}\n", port_quantities.xs);
+        std::cout << fmt::format("SM: {}\n", port_quantities.sm);
+        std::cout << fmt::format("MD: {}\n", port_quantities.md);
+        std::cout << fmt::format("LG: {}\n", port_quantities.lg);
+        std::cout << fmt::format("XL: {}\n", port_quantities.xl);
+
 
         doneEnteringList = false;
         CommunicationDevice selectedDevice;
@@ -754,7 +779,7 @@ namespace KSP_SM
             .SetOrbitDetails(params)
             .SetOrbitingBody(orbiting)
             .AddCommsDevices(comms_devs)
-            .AddDockingPorts(docking_ports)
+            .SetDockingPortQuantities(port_quantities)
             .AddKerbals(kerbals)
             .build();
         

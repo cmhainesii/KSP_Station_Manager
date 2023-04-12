@@ -1,46 +1,35 @@
 [
     {
         "active": true,
-        "apoapsis": 100000,
-        "capacity": 3,
+        "apoapsis": 125000,
+        "capacity": 6,
         "commsDevs": [
-            0,
-            0,
             0,
             0
         ],
         "dockingPorts": [
-            2,
-            2,
-            2,
             1,
-            1
+            1,
+            2,
+            2,
+            2
         ],
-        "id": "MUN-9X",
-        "kerbals": [
-            "Valentina Kerman"
-        ],
-        "name": "Eva Jones Observation Station",
-        "orbiting": 4,
-        "periapsis": 100000
+        "id": "EVEJ-IN-01",
+        "kerbals": [],
+        "name": "Eva Jones International Space Station",
+        "orbiting": 5,
+        "periapsis": 125000,
+        "port_quan_lg": 0,
+        "port_quan_md": 3,
+        "port_quan_sm": 2,
+        "port_quan_xl": 0,
+        "port_quan_xs": 0
     },
     {
         "active": true,
-        "apoapsis": 332030,
+        "apoapsis": 333000,
         "capacity": 16,
         "commsDevs": [
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
-            5,
             5,
             5,
             5,
@@ -72,10 +61,15 @@
             2,
             2
         ],
-        "id": "CGS-US-02",
+        "id": "CG-US-01",
         "kerbals": [],
-        "name": "Chester-Golden National Space Station",
+        "name": "Chester Golden National Space Station",
         "orbiting": 6,
-        "periapsis": 330312
+        "periapsis": 333000,
+        "port_quan_lg": 0,
+        "port_quan_md": 24,
+        "port_quan_sm": 0,
+        "port_quan_xl": 0,
+        "port_quan_xs": 0
     }
 ]
