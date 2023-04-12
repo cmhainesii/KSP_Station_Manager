@@ -33,6 +33,28 @@ namespace KSP_SM
         this->lg = counts.at(3);
         this->xl = counts.at(4);
     }
+        // std::size_t C16;
+        // std::size_t C16S;
+        // std::size_t C8888;
+        // std::size_t CSDTS;
+        // std::size_t CHG5;
+        // std::size_t CHG55;
+        // std::size_t RA15;
+        // std::size_t RA2;
+        // std::size_t RA100;
+    KSP_SM::CommsDevCount::CommsDevCount(std::array<std::size_t, 9> counts)
+    {
+        C16 = counts.at(0);
+        C16S = counts.at(1);
+        C8888 = counts.at(2);
+        CDTS = counts.at(3);
+        CHG5 = counts.at(4);
+        CHG55 = counts.at(5);
+        RA15 = counts.at(6);
+        RA2 = counts.at(7);
+        RA100 = counts.at(8);
+        
+    }
 
     string SpaceStation::ToString() const
     {
@@ -59,6 +81,16 @@ namespace KSP_SM
         else {
             ss << tab << "No communications equipment installed.\n";
         }
+
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16), m_comms_dev_quantities.C16);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16S), m_comms_dev_quantities.C16S);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_88_88), m_comms_dev_quantities.C8888);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_DTS_M1), m_comms_dev_quantities.CDTS);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_HG_55), m_comms_dev_quantities.CHG55);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_HG_5), m_comms_dev_quantities.CHG5);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_100), m_comms_dev_quantities.RA100);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_15), m_comms_dev_quantities.RA15);
+        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_2), m_comms_dev_quantities.RA2);
 
         ss << "Docking Ports Installed: \n";
         ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XSMALL) ,m_port_quantities.xs);
@@ -152,6 +184,12 @@ namespace KSP_SM
     SpaceStationBuilder& SpaceStationBuilder::SetDockingPortQuantities(const DockingPortCount& quantities)
     {
         this->m_space_station->m_port_quantities = quantities;
+        return *this;
+    }
+
+    SpaceStationBuilder& SpaceStationBuilder::SetCommsDevicesQuantities(const CommsDevCount& quantities)
+    {
+        this->m_space_station->m_comms_dev_quantities = quantities;
         return *this;
     }
 
@@ -249,7 +287,12 @@ namespace KSP_SM
                 {"periapsis", ss.m_orbit_details.periapsis}, {"orbiting", ss.m_orbiting_body},
                 {"port_quan_xs", ss.m_port_quantities.xs}, {"port_quan_sm", ss.m_port_quantities.sm},
                 {"port_quan_md", ss.m_port_quantities.md}, {"port_quan_lg", ss.m_port_quantities.lg},
-                {"port_quan_xl", ss.m_port_quantities.xl}
+                {"port_quan_xl", ss.m_port_quantities.xl},
+                {"comms_0", ss.m_comms_dev_quantities.C16}, {"comms_1", ss.m_comms_dev_quantities.C16S},
+                {"comms_2", ss.m_comms_dev_quantities.C8888}, {"comms_3", ss.m_comms_dev_quantities.CDTS},
+                {"comms_4", ss.m_comms_dev_quantities.CHG55}, {"comms_5", ss.m_comms_dev_quantities.CHG5},
+                {"comms_6", ss.m_comms_dev_quantities.RA100}, {"comms_7", ss.m_comms_dev_quantities.RA15},
+                {"comms_8", ss.m_comms_dev_quantities.RA2}
                 };
 
     
@@ -264,7 +307,11 @@ namespace KSP_SM
                 {"periapsis", ss->m_orbit_details.periapsis}, {"orbiting", ss->m_orbiting_body},
                 {"port_quan_xs", ss->m_port_quantities.xs}, {"port_quan_sm", ss->m_port_quantities.sm},
                 {"port_quan_md", ss->m_port_quantities.md}, {"port_quan_lg", ss->m_port_quantities.lg},
-                {"port_quan_xl", ss->m_port_quantities.xl}
+                {"port_quan_xl", ss->m_port_quantities.xl}, {"comms_0", ss->m_comms_dev_quantities.C16},
+                {"comms_1", ss->m_comms_dev_quantities.C16S}, {"comms_2", ss->m_comms_dev_quantities.C8888},
+                {"comms_3", ss->m_comms_dev_quantities.CDTS}, {"comms_4", ss->m_comms_dev_quantities.CHG55},
+                {"comms_5", ss->m_comms_dev_quantities.CHG5}, {"comms_6", ss->m_comms_dev_quantities.RA100},
+                {"comms_7", ss->m_comms_dev_quantities.RA15}, {"comms_8", ss->m_comms_dev_quantities.RA2}
                 };
 
     }
@@ -286,7 +333,18 @@ namespace KSP_SM
         j.at("port_quan_md").get_to(ss->m_port_quantities.md);
         j.at("port_quan_lg").get_to(ss->m_port_quantities.lg);
         j.at("port_quan_xl").get_to(ss->m_port_quantities.xl);
+        j.at("comms_0").get_to(ss->m_comms_dev_quantities.C16);
+        j.at("comms_1").get_to(ss->m_comms_dev_quantities.C16S);
+        j.at("comms_2").get_to(ss->m_comms_dev_quantities.C8888);
+        j.at("comms_3").get_to(ss->m_comms_dev_quantities.CDTS);
+        j.at("comms_4").get_to(ss->m_comms_dev_quantities.CHG55);
+        j.at("comms_5").get_to(ss->m_comms_dev_quantities.CHG5);
+        j.at("comms_6").get_to(ss->m_comms_dev_quantities.RA100);
+        j.at("comms_7").get_to(ss->m_comms_dev_quantities.RA15);
+        j.at("comms_8").get_to(ss->m_comms_dev_quantities.RA2);
     }
+
+    
 
     void from_json(const json& j, SpaceStation& ss)
     {
@@ -304,6 +362,15 @@ namespace KSP_SM
         j.at("port_quan_md").get_to(ss.m_port_quantities.md);
         j.at("port_quan_lg").get_to(ss.m_port_quantities.lg);
         j.at("port_quan_xl").get_to(ss.m_port_quantities.xl);
+        j.at("comms_0").get_to(ss.m_comms_dev_quantities.C16);
+        j.at("comms_1").get_to(ss.m_comms_dev_quantities.C16S);
+        j.at("comms_2").get_to(ss.m_comms_dev_quantities.C8888);
+        j.at("comms_3").get_to(ss.m_comms_dev_quantities.CDTS);
+        j.at("comms_4").get_to(ss.m_comms_dev_quantities.CHG55);
+        j.at("comms_5").get_to(ss.m_comms_dev_quantities.CHG5);
+        j.at("comms_6").get_to(ss.m_comms_dev_quantities.RA100);
+        j.at("comms_7").get_to(ss.m_comms_dev_quantities.RA15);
+        j.at("comms_8").get_to(ss.m_comms_dev_quantities.RA2);
     }
 
     OrbitalParameters::OrbitalParameters(size_t ap, size_t pe)
@@ -337,7 +404,9 @@ namespace KSP_SM
         string station_id;
         string station_name;
         DockingPortCount port_quantities;
+        CommsDevCount comms_dev_quantities;
         std::array<std::size_t, 5> port_builder {};
+        std::array<std::size_t, 9> comms_builder {};
         vector<CommunicationDevice> comms_devs;
         vector<string> kerbals;
         size_t capacity;
@@ -632,10 +701,8 @@ namespace KSP_SM
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "Enter quantity of selected docking port: ";
             }
-            for(auto i = 0; i < quantity; ++i)
-            {
-                port_builder.at(static_cast<int>(selectedDp)) = quantity;
-            }
+
+            port_builder.at(static_cast<int>(selectedDp)) = quantity;
 
 
             
@@ -741,7 +808,11 @@ namespace KSP_SM
             {
                 comms_devs.push_back(selectedDevice);
             }
+
+            comms_builder.at(static_cast<int>(selectedDevice)) = quantity;
         }
+
+        comms_dev_quantities = CommsDevCount(comms_builder);
 
         for (const auto& current : comms_devs)
         {
@@ -780,6 +851,7 @@ namespace KSP_SM
             .SetOrbitingBody(orbiting)
             .AddCommsDevices(comms_devs)
             .SetDockingPortQuantities(port_quantities)
+            .SetCommsDevicesQuantities(comms_dev_quantities)
             .AddKerbals(kerbals)
             .build();
         

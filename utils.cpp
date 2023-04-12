@@ -11,6 +11,8 @@ string Utility::BoolToYesNo(bool input)
 string Utility::numberWithCommas(size_t input)
 {
     string result = std::to_string(input);
+    if (result.size() < 3)
+        return result;
     for (auto i = result.size() - 3; i > 0; i -=3)
     {
         result.insert(i, ",");
