@@ -13,6 +13,9 @@
 
 using nlohmann::json;
 
+constexpr size_t NUM_COMM_DEVICES = 9;
+constexpr size_t NUM_DOCKING_PORTS = 5;
+
 namespace KSP_SM
 {
 
@@ -21,8 +24,8 @@ namespace KSP_SM
 
     struct OrbitalParameters
     {
-        size_t apoapsis;
-        size_t periapsis;
+        size_t apoapsis = 100;
+        size_t periapsis = 100;
 
     public:
         OrbitalParameters() = default;
@@ -40,23 +43,25 @@ namespace KSP_SM
 
       public:
         DockingPortCount() = default;
-        DockingPortCount(std::array<std::size_t,5> counts);
+        explicit DockingPortCount(std::array<std::size_t, NUM_DOCKING_PORTS> counts);
+        std::array<std::size_t, NUM_DOCKING_PORTS> GetAsArray() const;
     };
 
     struct CommsDevCount {
-        std::size_t C16;
-        std::size_t C16S;
-        std::size_t C8888;
-        std::size_t CDTS;
-        std::size_t CHG5;
-        std::size_t CHG55;
-        std::size_t RA15;
-        std::size_t RA2;
-        std::size_t RA100;
+        std::size_t C16 = 0;
+        std::size_t C16S = 0;
+        std::size_t C8888 = 0;
+        std::size_t CDTS = 0;
+        std::size_t CHG5 = 0;
+        std::size_t CHG55 = 0;
+        std::size_t RA15 = 0;
+        std::size_t RA2 = 0;
+        std::size_t RA100 = 0;
 
         public:
         CommsDevCount() = default;
-        CommsDevCount(std::array<std::size_t, 9> counts);
+        explicit CommsDevCount(std::array<std::size_t, NUM_COMM_DEVICES> counts);
+        std::array<std::size_t, NUM_COMM_DEVICES> GetAsArray() const;
     };
 
     enum class CommunicationDevice

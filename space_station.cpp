@@ -11,8 +11,38 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
+
+
 namespace KSP_SM
 {
+
+    std::array<std::size_t, NUM_DOCKING_PORTS> KSP_SM::DockingPortCount::GetAsArray() const 
+    {
+        std::array<std::size_t, NUM_DOCKING_PORTS> counts;
+        counts.at(0) = this->xs;
+        counts.at(1) = this->sm;
+        counts.at(2) = this->md;
+        counts.at(3) = this->lg;
+        counts.at(4) = this->xl;
+
+        return counts;
+    }
+
+    std::array<std::size_t, NUM_COMM_DEVICES> CommsDevCount::GetAsArray() const 
+    {
+        std::array<std::size_t, NUM_COMM_DEVICES> counts;
+        counts.at(0) = this->C16;
+        counts.at(1) = this->C16S;
+        counts.at(2) = this->C8888;
+        counts.at(3) = this->CDTS;
+        counts.at(4) = this->CHG55;
+        counts.at(5) = this->CHG5;
+        counts.at(6) = this->RA100;
+        counts.at(7) = this->RA15;
+        counts.at(8) = this->RA2;
+
+        return counts;
+    }
 
     SpaceStation::SpaceStation(string station_id) noexcept
     {
@@ -25,7 +55,7 @@ namespace KSP_SM
         //std::unique_ptr<SpaceStation>(new SpaceStation(station_id));
     }
 
-    KSP_SM::DockingPortCount::DockingPortCount(std::array<std::size_t, 5> counts)
+    KSP_SM::DockingPortCount::DockingPortCount(std::array<std::size_t, NUM_DOCKING_PORTS> counts)
     {
         this->xs = counts.at(0);
         this->sm = counts.at(1);
@@ -33,16 +63,8 @@ namespace KSP_SM
         this->lg = counts.at(3);
         this->xl = counts.at(4);
     }
-        // std::size_t C16;
-        // std::size_t C16S;
-        // std::size_t C8888;
-        // std::size_t CSDTS;
-        // std::size_t CHG5;
-        // std::size_t CHG55;
-        // std::size_t RA15;
-        // std::size_t RA2;
-        // std::size_t RA100;
-    KSP_SM::CommsDevCount::CommsDevCount(std::array<std::size_t, 9> counts)
+
+    KSP_SM::CommsDevCount::CommsDevCount(std::array<std::size_t, NUM_COMM_DEVICES> counts)
     {
         C16 = counts.at(0);
         C16S = counts.at(1);
@@ -72,23 +94,31 @@ namespace KSP_SM
         ss << fmt::format("Capacity: {} kerbals", m_capacity) << endl;
         ss << fmt::format("Station Currently Active: {}", Utility::BoolToYesNo(m_active)) << endl;
 
-        ss << "Communication Equipment: \n\n";
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16), m_comms_dev_quantities.C16);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16S), m_comms_dev_quantities.C16S);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_88_88), m_comms_dev_quantities.C8888);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_DTS_M1), m_comms_dev_quantities.CDTS);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_HG_55), m_comms_dev_quantities.CHG55);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_HG_5), m_comms_dev_quantities.CHG5);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_100), m_comms_dev_quantities.RA100);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_15), m_comms_dev_quantities.RA15);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_2), m_comms_dev_quantities.RA2);
+        ss << "Communication Equipment: \n";
 
-        ss << "Docking Ports Installed: \n\n";
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XSMALL) ,m_port_quantities.xs);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::SMALL) , m_port_quantities.sm);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::MEDIUM) ,m_port_quantities.md);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::LARGE) ,m_port_quantities.lg);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XLARGE) ,m_port_quantities.xl);
+        std::array<std::size_t, NUM_COMM_DEVICES> comm_counts = m_comms_dev_quantities.GetAsArray();
+        for (auto i = 0; i < NUM_COMM_DEVICES; ++i)
+        {
+            if(comm_counts.at(i) > 0)
+            {
+                ss << fmt::format("\t{:25}: {:4}\n", CommsDeviceToString(static_cast<CommunicationDevice>(i)), comm_counts.at(i));
+            }
+        }
+
+        ss << "\n";
+
+
+        ss << "Docking Ports Installed: \n";
+        std::array<std::size_t, NUM_DOCKING_PORTS> docking_counts = m_port_quantities.GetAsArray();
+        for(auto i = 0; i < NUM_DOCKING_PORTS; ++i)
+        {
+            if(docking_counts.at(i) > 0)
+            {
+                ss << fmt::format("\t{:25}: {:4}\n", DockingPortToString(static_cast<DockingPort>(i)) , docking_counts.at(i));    
+            }
+        }
+        
+        ss << "\n";
 
         ss << "Kerbals Present: " << endl;
         if (m_kerbals.size() > 0)
