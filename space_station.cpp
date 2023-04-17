@@ -12,8 +12,12 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
+
+
 namespace KSP_SM
 {
+
+   
 
     SpaceStation::SpaceStation(string station_id) noexcept
     {
@@ -44,23 +48,31 @@ namespace KSP_SM
         ss << fmt::format("Capacity: {} kerbals", m_capacity) << endl;
         ss << fmt::format("Station Currently Active: {}", Utility::BoolToYesNo(m_active)) << endl;
 
-        ss << "Communication Equipment: \n\n";
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16), m_comms_dev_quantities.C16);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_16S), m_comms_dev_quantities.C16S);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_88_88), m_comms_dev_quantities.C8888);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_DTS_M1), m_comms_dev_quantities.CDTS);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_HG_55), m_comms_dev_quantities.CHG55);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::COMM_HG_5), m_comms_dev_quantities.CHG5);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_100), m_comms_dev_quantities.RA100);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_15), m_comms_dev_quantities.RA15);
-        ss << fmt::format("{:25}: {:4}\n", CommsDeviceToString(CommunicationDevice::RA_2), m_comms_dev_quantities.RA2);
+        ss << "Communication Equipment: \n";
 
-        ss << "Docking Ports Installed: \n\n";
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XSMALL) ,m_port_quantities.xs);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::SMALL) , m_port_quantities.sm);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::MEDIUM) ,m_port_quantities.md);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::LARGE) ,m_port_quantities.lg);
-        ss << fmt::format("{:25}: {:4}\n", DockingPortToString(DockingPort::XLARGE) ,m_port_quantities.xl);
+        std::array<std::size_t, NUM_COMM_DEVICES> comm_counts = m_comms_dev_quantities.GetAsArray();
+        for (auto i = 0; i < NUM_COMM_DEVICES; ++i)
+        {
+            if(comm_counts.at(i) > 0)
+            {
+                ss << fmt::format("\t{:25}: {:4}\n", CommsDeviceToString(static_cast<CommunicationDevice>(i)), comm_counts.at(i));
+            }
+        }
+
+        ss << "\n";
+
+
+        ss << "Docking Ports Installed: \n";
+        std::array<std::size_t, NUM_DOCKING_PORTS> docking_counts = m_port_quantities.GetAsArray();
+        for(auto i = 0; i < NUM_DOCKING_PORTS; ++i)
+        {
+            if(docking_counts.at(i) > 0)
+            {
+                ss << fmt::format("\t{:25}: {:4}\n", DockingPortToString(static_cast<DockingPort>(i)) , docking_counts.at(i));    
+            }
+        }
+        
+        ss << "\n";
 
         ss << "Kerbals Present: " << endl;
         if (m_kerbals.size() > 0)

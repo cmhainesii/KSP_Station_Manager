@@ -14,6 +14,9 @@
 
 using nlohmann::json;
 
+constexpr size_t NUM_COMM_DEVICES = 9;
+constexpr size_t NUM_DOCKING_PORTS = 5;
+
 namespace KSP_SM
 {
 
