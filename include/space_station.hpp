@@ -14,8 +14,7 @@
 
 using nlohmann::json;
 
-constexpr size_t NUM_COMM_DEVICES = 9;
-constexpr size_t NUM_DOCKING_PORTS = 5;
+
 
 namespace KSP_SM
 {
@@ -48,7 +47,7 @@ namespace KSP_SM
         {
 
         public:
-            string ToString() const;
+            string ToString();
             static string DockingPortToString(DockingPort port);
             static string CommsDeviceToString(CommunicationDevice dev);
             string GetName() const;

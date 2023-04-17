@@ -4,6 +4,9 @@
 #include <cstdlib>
 #include <array>
 
+constexpr size_t NUM_COMM_DEVICES = 9;
+constexpr size_t NUM_DOCKING_PORTS = 5;
+
 namespace KSP_SM
 {
 
@@ -19,6 +22,7 @@ namespace KSP_SM
     public:
         DockingPortCount() = default;
         DockingPortCount(std::array<std::size_t, 5> counts);
+        std::array<std::size_t, NUM_DOCKING_PORTS> GetAsArray();
     };
 
     struct CommsDevCount
@@ -36,6 +40,7 @@ namespace KSP_SM
     public:
         CommsDevCount() = default;
         CommsDevCount(std::array<std::size_t, 9> counts);
+        std::array<std::size_t, NUM_COMM_DEVICES> GetAsArray();
     };
 
     enum class CommunicationDevice
