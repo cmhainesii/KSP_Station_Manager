@@ -22,7 +22,7 @@ namespace KSP_SM
     public:
         DockingPortCount() = default;
         DockingPortCount(std::array<std::size_t, 5> counts);
-        std::array<std::size_t, NUM_DOCKING_PORTS> GetAsArray();
+        std::array<std::size_t, NUM_DOCKING_PORTS> GetAsArray() const;
     };
 
     struct CommsDevCount
@@ -40,7 +40,7 @@ namespace KSP_SM
     public:
         CommsDevCount() = default;
         CommsDevCount(std::array<std::size_t, 9> counts);
-        std::array<std::size_t, NUM_COMM_DEVICES> GetAsArray();
+        std::array<std::size_t, NUM_COMM_DEVICES> GetAsArray() const;
     };
 
     enum class CommunicationDevice

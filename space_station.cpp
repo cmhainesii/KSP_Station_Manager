@@ -32,7 +32,7 @@ namespace KSP_SM
 
   
 
-    string SpaceStation::ToString()
+    string SpaceStation::ToString() const
     {
         stringstream ss;
         string tab = "\t";

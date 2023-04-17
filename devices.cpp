@@ -33,7 +33,7 @@ namespace KSP_SM
         RA100 = counts.at(8);
     }
 
-    std::array<std::size_t, NUM_COMM_DEVICES> CommsDevCount::GetAsArray()
+    std::array<std::size_t, NUM_COMM_DEVICES> CommsDevCount::GetAsArray() const
     {
         std::array<std::size_t, NUM_COMM_DEVICES> counts;
 
@@ -50,7 +50,7 @@ namespace KSP_SM
         return counts;
     }
 
-    std::array<std::size_t, NUM_DOCKING_PORTS> DockingPortCount::GetAsArray()
+    std::array<std::size_t, NUM_DOCKING_PORTS> DockingPortCount::GetAsArray() const
     {
         std::array<std::size_t, NUM_DOCKING_PORTS> counts;
 

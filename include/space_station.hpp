@@ -47,7 +47,7 @@ namespace KSP_SM
         {
 
         public:
-            string ToString();
+            string ToString() const;
             static string DockingPortToString(DockingPort port);
             static string CommsDeviceToString(CommunicationDevice dev);
             string GetName() const;
