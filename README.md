@@ -1,11 +1,11 @@
 # KSP_Station_Manager
 Program to keep track of Space Stations in KSP/KSP2
 
-## Basic Info
-Author: Charles Haines
-Language: C++
-Build System: cmake
-Supported Operating Systems: Linux, Windows, OSX
+## Basic Info  
+Author: Charles Haines  
+Language: C++  
+Build System: cmake  
+Supported Operating Systems: Linux, Windows, OSX  
 
 # Introduction
 This is just a simple command line application that manages a list of Space Stations in KSP2. It stores basic information about a space station such as the name, a station ID, capacity, number and types of docking ports and communication devices. The stations can be written to and read to a json file.
