@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 cmake_policy(SET CMP0135 NEW)
 project(KSP_Station_Manager VERSION 0.1.0)
-configure_file(include/build_vars.h.in "${PROJECT_SOURCE_DIR}/include/build_vars.h")
+configure_file(include/build_vars.h.in "${PROJECT_SOURCE_DIR}/include/build_vars.hpp")
 
 include(CTest)
 
