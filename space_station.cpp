@@ -855,6 +855,20 @@ namespace KSP_SM
         return removed;
 
     }
+
+    void SpaceStation::ChangeCapcity(const std::size_t& new_capacity)
+    {
+        // Don't change capacity if it would make the capacity less
+        // than the current number of kerbals onboard.
+        if (new_capacity < this->GetNumberKerbalsAboard())
+        {
+            return;
+        }
+
+        this->m_capacity = new_capacity;
+
+
+    }
 }
 
 

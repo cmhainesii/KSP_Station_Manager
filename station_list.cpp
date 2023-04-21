@@ -115,7 +115,9 @@ void StationList::ManageStationsFromConsole()
     {
         std::cout << "Manage Station Options\n\n";
         std::cout << "A -> Add Kerbal\n";
-        std::cout << "R -> Remove Kerbal\n\n";
+        std::cout << "R -> Remove Kerbal\n";
+        std::cout << "E -> Edit Capacity\n";
+        std::cout << "F -> Finish Managing Stations\n\n";
         std::cout << "Enter Your Selection: ";
         std::getline(std::cin, buffer);
         if (buffer.size() == 0)
@@ -126,67 +128,153 @@ void StationList::ManageStationsFromConsole()
         char selection = std::tolower(buffer.at(0));
 
         // Add Kerbals to station
-        if (selection == 'a')
+        switch (selection)
         {
-            bool doneAddingKerbals {false};
-
-            while(!doneAddingKerbals)
+          case 'a': 
+          {
+            // Check that the station has capacity to add a kerbal
+            if ( this->GetStations().at(index)->GetNumberKerbalsAboard() >= this->GetStations().at(index)->GetCapacity())
             {
-                std::cout << "Enter Kerbal Name (leave blank to finish): ";
-                std::getline(std::cin, buffer);
-
-                if(buffer.compare("") != 0)
-                {
-                    // Add kerbal to the stations list
-                    this->m_stations.at(index)->AddKerbal(buffer);
-                    continue;
-                }
-
-                // If execution reaches here, the user is finished entering kerbals.
-                doneAddingKerbals = true;
-                doneManaging = true;
+                std::cerr << "Unable to add kerbals. This station is currently at capacity.\n";
+                Utility::PressEnterToContinue();
+                continue;
             }
-        }
-        else if (selection == 'r')
-        {
+            
+            size_t max_additional_kerbals = this->GetStations().at(index)->GetCapacity() - this->GetStations().at(index)->GetNumberKerbalsAboard();
+            
+            this->AddKerbalsFromConsole(index, max_additional_kerbals);
+
+            break;
+          }
+          case 'r':
+          {
             auto number_on_board = this->GetStations().at(index)->GetNumberKerbalsAboard();
             if (number_on_board == 0)
             {
                 std::cout << "Error: No kerbals onboard to remove.\n";
-                doneManaging = true;
+                Utility::PressEnterToContinue();
                 continue;
             }
 
-            size_t kerbal_remove_index {};
+            this->RemoveKerbalFromConsole(index);            
+            break;
+          }
 
-            bool done_removing_kerbals{false};
-            while (!done_removing_kerbals)
-            {
-                std::cout << "Enter index of kerbal to remove: ";
-                while (!(std::cin >> kerbal_remove_index))
-                {
-                    std::cout << "Invalid response. Must be an integer.\n";
-                    Utility::ClearInputBuffer();
-                    std::cout << "Enter index of kerbal to remove: ";
-                }
+          case 'e':
+          {
+            this->ChangeCapacityFromConsole(index);
+            break;
+          }
 
-                // Validate input
-                if(kerbal_remove_index >= this->m_stations.at(index)->GetNumberKerbalsAboard())
-                {
-                    std::cout << "Error: Index exceeds bounds of list of onboard kerbals.\n";
-                    continue;
-                }
-
-                // If exection reaches here, valid index was received
-                // Remove kerbal by index
-                auto num_removed = this->GetStations().at(index)->RemoveKerbalByIndex(kerbal_remove_index);
-                std::cout << fmt::format("Removed {} kerbals\n", num_removed);
-                done_removing_kerbals = true;
-                doneManaging = true;
-
-            }
+          case 'f':
+          {
+            doneManaging = true;
+            break;
+          }
+          
+          default:
+          {
+            break;
+          }
+          
         }
 
 
     }    
+}
+
+void StationList::AddKerbalsFromConsole(const std::size_t stationIndex, std::size_t max_additonal)
+{
+    bool doneAddingKerbals {false};
+    string buffer {};
+
+    while (!doneAddingKerbals && max_additonal >= 1)
+    {
+        std::cout << "Enter Kerbal Name (leave blank to finish): ";
+        std::getline(std::cin, buffer);
+
+        if (buffer.compare("") != 0)
+        {
+            // Add kerbal to the stations list
+            this->m_stations.at(stationIndex)->AddKerbal(buffer);
+            --max_additonal;
+            continue;
+        }
+
+        // If execution reaches here, the user is finished entering kerbals.
+        
+        // Print a message letting the user know in the event the station
+        // is at capacity and we are returning to the manage station menu
+        // automatically.
+        
+        doneAddingKerbals = true;
+    }
+
+    if (max_additonal == 0)
+    {
+        std::cout << "Station has reached capacity. Returning to manage stations menu.\n";
+        Utility::PressEnterToContinue();
+    }
+}
+
+std::size_t StationList::RemoveKerbalFromConsole(const std::size_t &index)
+{
+    size_t kerbal_remove_index{};
+    size_t num_removed {};
+
+    bool done_removing_kerbals{false};
+    while (!done_removing_kerbals)
+    {
+        std::cout << "Enter index of kerbal to remove: ";
+        while (!(std::cin >> kerbal_remove_index))
+        {
+            std::cout << "Invalid response. Must be an integer.\n";
+            Utility::ClearInputBuffer();
+            std::cout << "Enter index of kerbal to remove: ";
+        }
+
+        // Validate input
+        if (kerbal_remove_index >= this->m_stations.at(index)->GetNumberKerbalsAboard())
+        {
+            std::cout << "Error: Index exceeds bounds of list of onboard kerbals.\n";
+            continue;
+        }
+
+        // If exection reaches here, valid index was received
+        // Remove kerbal by index
+        num_removed = this->GetStations().at(index)->RemoveKerbalByIndex(kerbal_remove_index);
+        std::cout << fmt::format("Removed kerbal at index {}\n", kerbal_remove_index);
+        done_removing_kerbals = true;
+        
+    }
+    return num_removed;
+}
+
+void StationList::ChangeCapacityFromConsole(const std::size_t& index)
+{
+    size_t new_capacity;
+    unique_station& current_station = this->GetStations().at(index);
+    std::cout << "Enter new capacity: ";
+    while(!(std::cin >> new_capacity))
+    {
+        std::cout << "Invalid Response. Must be positive integer or zero.\n";
+        Utility::ClearInputBuffer();
+    }
+
+    Utility::ClearInputBuffer();
+
+    // Check capacity is equal to or larger than the current number of kerbals
+    // onboard.
+    if (new_capacity < current_station->GetNumberKerbalsAboard())
+    {
+        std::cerr << "ERROR: New capacity cannot be less than the number of kerbals currently onboard. Aborting\n\n";
+        Utility::PressEnterToContinue();
+        return;
+    }
+
+    // Change station capacity
+    current_station->ChangeCapcity(new_capacity);
+    std::cout << fmt::format("Station capacity is now {}\n\n", current_station->GetCapacity());
+    Utility::PressEnterToContinue();
+    return;
 }

@@ -17,6 +17,7 @@ public:
     static string numberWithCommas(size_t input);
     static string PrettyFormatList(const vector<KSP_SM::CommunicationDevice>& list);
     static string PrettyFormatList(const vector<KSP_SM::DockingPort>& list);
+    static void PressEnterToContinue();
     static void ClearInputBuffer();
 };
 

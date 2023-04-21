@@ -27,6 +27,9 @@ class StationList {
 
   private:
    vector<unique_station> m_stations;
+   void AddKerbalsFromConsole(const std::size_t index, std::size_t max_additional);
+   size_t RemoveKerbalFromConsole(const std::size_t& index);
+   void ChangeCapacityFromConsole(const size_t& index);
 };
 
 

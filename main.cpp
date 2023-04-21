@@ -31,19 +31,46 @@ const string STATIONS_FILENAME = "stations.json";
 
 int main(int argc, char **argv)
 {
+    // Convert arguments list to a vector of std::strings
+    vector<string> argument_list(argv, argv + argc);
 
-    if (argc > 1)
+    if (argument_list.size() >= 2)
     {
+        string output_filename {"stations.txt"};
+        std::cout << "fn: " << output_filename << "\n";
         // Running in non-interactive mode!
-        if (std::strcmp(argv[1], "-i") == 0)
+        if(argument_list.at(1).compare("-i") == 0)
         {
-            StationList stations;
-
-            std::ofstream out_file("stations.txt");
-            for (const auto &current : stations.GetStations())
+            // If filename supplied in cmd line args, use it.
+            if (argument_list.size() >=3)
             {
-                out_file << current->ToString();
-                out_file.close();
+                output_filename = argument_list.at(2);
+            }
+
+            // Create and populate stations list from stations.json
+            StationList stations;
+            auto num_stations = stations.ReadStationsFromFile(STATIONS_FILENAME);
+            
+            // No stations found in station.json
+            if(!num_stations)
+            {
+                std::cout << "No stations\n";
+                return 0;
+            }
+
+            // Attempt to open file and write station info in plain text
+            try {            
+                std::ofstream out_file(output_filename);
+                out_file.exceptions(std::ofstream::failbit);
+                for (const auto& current : stations.GetStations())
+                {
+                    out_file << current->ToString();
+                }
+            } catch (const std::ofstream::failure& e)
+            {
+                std::cerr << "Error opening file for writing.\n";
+                std::cerr << e.what() << '\n';
+                return -1;
             }
         }
 
@@ -53,7 +80,7 @@ int main(int argc, char **argv)
     StationList stations;
     bool exitProgram = false;
     std::string buffer;
-    std::string menuText = Menu::getMenuText();
+    std::string menuText = Menu::getMainMenuText();
 
     std::cout << "KSP Station Manger\n";
     std::cout << fmt::format("Verson: {}.{}\n", KSP_SM_VERSION_MAJOR, KSP_SM_VERSION_MINOR);

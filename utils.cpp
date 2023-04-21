@@ -119,3 +119,11 @@ void Utility::ClearInputBuffer()
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
+
+void Utility::PressEnterToContinue()
+{
+    string temporary;
+    std::cout << "Press any key to continue...";
+    std::getline(std::cin, temporary);
+    std::cout << "\n\n";
+}

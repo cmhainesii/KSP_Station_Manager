@@ -57,6 +57,7 @@ namespace KSP_SM
             void AddKerbal(const std::string& name);
             bool isActive() const;
             OrbitalParameters GetOrbitalDetails() const;
+            void ChangeCapcity(const std::size_t& capacity);
             SpaceStation() = default;
             explicit SpaceStation(string station_id) noexcept;
             std::size_t RemoveKerbalByIndex(std::size_t index);

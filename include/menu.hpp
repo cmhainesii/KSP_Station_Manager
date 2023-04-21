@@ -7,7 +7,8 @@ using std::string;
 class Menu
 {
   public:
-    static string getMenuText();
+    static string getMainMenuText();
+    static string getMangeStationMenuText();
 
   private:
     static constexpr unsigned char indent_spaces = 4;

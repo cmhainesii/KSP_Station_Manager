@@ -1,7 +1,7 @@
 #include "include/menu.hpp"
 #include <sstream>
 
-string Menu::getMenuText()
+string Menu::getMainMenuText()
 {
     std::stringstream ss;
 
