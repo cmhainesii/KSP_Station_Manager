@@ -12,4 +12,9 @@ This is just a simple command line application that manages a list of Space Stat
 
 This is an interactive command line application but it does support one command line option: -i <filename> which will dump a plain text listing of the station info. It will automatically pull in stations from the default filename, station.json in the same directory as the executable. The filename supplied in the -i option is the output file name. The input file is always station.json. This will be updated at some point so the input filename can be specified as well. Not supplying a filename to the -i argument will save the file as stations.txt in the directory of the executable.
 
+# Steps to build:
+`mkdir build`  
+`cd build`  
+`cmake --build .`  
+
 
