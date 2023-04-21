@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <fmt/core.h>
+#include <memory>
 
 using SpaceStation = KSP_SM::SpaceStationBuilder::SpaceStation;
 using SpaceStationBuilder = KSP_SM::SpaceStationBuilder;
@@ -51,7 +52,7 @@ namespace KSP_SM
         ss << "Communication Equipment: \n";
 
         std::array<std::size_t, NUM_COMM_DEVICES> comm_counts = m_comms_dev_quantities.GetAsArray();
-        for (auto i = 0; i < NUM_COMM_DEVICES; ++i)
+        for (size_t i = 0; i < NUM_COMM_DEVICES; ++i)
         {
             if(comm_counts.at(i) > 0)
             {
@@ -64,7 +65,7 @@ namespace KSP_SM
 
         ss << "Docking Ports Installed: \n";
         std::array<std::size_t, NUM_DOCKING_PORTS> docking_counts = m_port_quantities.GetAsArray();
-        for(auto i = 0; i < NUM_DOCKING_PORTS; ++i)
+        for(size_t i = 0; i < NUM_DOCKING_PORTS; ++i)
         {
             if(docking_counts.at(i) > 0)
             {
@@ -78,9 +79,9 @@ namespace KSP_SM
         if (m_kerbals.size() > 0)
         {
             
-            for (auto current : m_kerbals)
+            for (size_t i {0}; i < m_kerbals.size(); ++i)
             {
-                ss << fmt::format("{}{}", tab, current) << endl;
+                ss << fmt::format("{}{}) {}", tab, i, m_kerbals.at(i)) << endl;
             }
         }
         else
@@ -584,7 +585,7 @@ namespace KSP_SM
                 }
                 validInput = true;
             }
-            catch (std::invalid_argument& e) {
+            catch (const std::invalid_argument& e) {
                 std::cout << "Invalid Response\n";
                 continue;
             }
@@ -612,7 +613,7 @@ namespace KSP_SM
                 }
                 validInput = true;
             }
-            catch (std::invalid_argument& e)
+            catch (const std::invalid_argument& e)
             {
                 std::cout << "Invalid Response\n";
                 continue;
@@ -622,10 +623,6 @@ namespace KSP_SM
 
         std::cout << "AP: " << Utility::numberWithCommas(params.apoapsis) << std::endl;
         std::cout << "PE: " << Utility::numberWithCommas(params.periapsis) << std::endl;
-
-        validInput = false;
-
-        // here
 
         validInput = false;
         char selection;
@@ -665,6 +662,7 @@ namespace KSP_SM
                     break;
                 case 'd':
                     selectedDp = DockingPort::LARGE;
+                    break;
                 case 'e':
                     selectedDp = DockingPort::XLARGE;
                     break;
@@ -831,6 +829,30 @@ namespace KSP_SM
 
         return newStation;
 
+
+    }
+
+    std::size_t SpaceStation::GetNumberKerbalsAboard() const
+    {
+        return this->m_kerbals.size();
+    }
+
+    void SpaceStation::AddKerbal(const std::string& name)
+    {
+        this->m_kerbals.push_back(name);
+    }
+
+    std::size_t SpaceStation::RemoveKerbalByIndex(std::size_t index)
+    {
+        size_t removed {};
+
+        if (this->m_kerbals.size() > 0 && index < this->m_kerbals.size())
+        {
+            this->m_kerbals.erase(m_kerbals.begin() + index);
+            ++removed;
+        }
+
+        return removed;
 
     }
 }

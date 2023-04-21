@@ -23,6 +23,7 @@ class StationList {
     void WriteStationsToFile(const string &filename);
     vector<unique_station>& GetStations();
     void Reset() noexcept;
+    void ManageStationsFromConsole();
 
   private:
    vector<unique_station> m_stations;

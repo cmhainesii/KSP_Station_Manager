@@ -27,29 +27,24 @@ using unique_station = std::unique_ptr<SpaceStation>;
 
 int main(int argc, char **argv);
 
-
-
 const string STATIONS_FILENAME = "stations.json";
 
 int main(int argc, char **argv)
 {
 
-    if (argc > 1) 
+    if (argc > 1)
     {
         // Running in non-interactive mode!
         if (std::strcmp(argv[1], "-i") == 0)
         {
             StationList stations;
 
-            
-            
             std::ofstream out_file("stations.txt");
-            for (const auto& current : stations.GetStations())
+            for (const auto &current : stations.GetStations())
             {
                 out_file << current->ToString();
                 out_file.close();
             }
-            
         }
 
         return 0;
@@ -66,11 +61,14 @@ int main(int argc, char **argv)
     while (!exitProgram)
     {
 
-
         std::cout << std::endl;
         std::cout << menuText;
         std::cout << "Enter Your Selection: ";
         std::cin >> buffer;
+        if(buffer.size() == 0 )
+        {
+            continue;
+        }
         char selection = std::tolower(buffer.at(0));
         if (selection == 'r')
         {
@@ -105,16 +103,15 @@ int main(int argc, char **argv)
             std::cout << std::endl;
             std::cout << "Delete Station" << std::endl;
             std::cout << "Enter Station List Index: ";
-            while(!(std::cin >> station_index))
+            while (!(std::cin >> station_index))
             {
                 std::cout << "Invalid Index" << std::endl;
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "Enter Station List Index: ";
-
             }
-            
-            if(stations.DeleteStation(station_index))
+
+            if (stations.DeleteStation(station_index))
             {
                 std::cout << fmt::format("Deleted station at index {}", station_index) << std::endl;
             }
@@ -125,7 +122,6 @@ int main(int argc, char **argv)
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
-
         }
 
         if (selection == 'l')
@@ -133,7 +129,13 @@ int main(int argc, char **argv)
             stations.ListAllStations();
             continue;
         }
-        if (buffer.compare("q") == 0)
+
+        if (selection == 'm')
+        {
+            stations.ManageStationsFromConsole();
+            continue;
+        }
+        if (selection == 'q')
         {
             exitProgram = true;
             continue;
@@ -144,9 +146,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-
-
-
-
-

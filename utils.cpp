@@ -1,5 +1,6 @@
 #include "include/utils.hpp"
 #include <sstream>
+#include <iostream>
 
 using namespace KSP_SM;
 
@@ -111,4 +112,10 @@ string Utility::PrettyFormatList(const vector<DockingPort>& list)
     }
 
     return ss.str();
+}
+
+void Utility::ClearInputBuffer()
+{
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }

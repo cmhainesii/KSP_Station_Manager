@@ -21,25 +21,25 @@ namespace KSP_SM
 
     public:
         DockingPortCount() = default;
-        DockingPortCount(std::array<std::size_t, 5> counts);
+        explicit DockingPortCount(std::array<std::size_t, 5> counts);
         std::array<std::size_t, NUM_DOCKING_PORTS> GetAsArray() const;
     };
 
     struct CommsDevCount
     {
-        std::size_t C16;
-        std::size_t C16S;
-        std::size_t C8888;
-        std::size_t CDTS;
-        std::size_t CHG5;
-        std::size_t CHG55;
-        std::size_t RA15;
-        std::size_t RA2;
-        std::size_t RA100;
+        std::size_t C16 {};
+        std::size_t C16S {};
+        std::size_t C8888 {};
+        std::size_t CDTS {};
+        std::size_t CHG5 {};
+        std::size_t CHG55 {};
+        std::size_t RA15 {};
+        std::size_t RA2 {};
+        std::size_t RA100 {};
 
     public:
         CommsDevCount() = default;
-        CommsDevCount(std::array<std::size_t, 9> counts);
+        explicit CommsDevCount(std::array<std::size_t, 9> counts);
         std::array<std::size_t, NUM_COMM_DEVICES> GetAsArray() const;
     };
 

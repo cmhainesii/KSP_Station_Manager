@@ -11,15 +11,7 @@ namespace KSP_SM
         this->lg = counts.at(3);
         this->xl = counts.at(4);
     }
-    // std::size_t C16;
-    // std::size_t C16S;
-    // std::size_t C8888;
-    // std::size_t CSDTS;
-    // std::size_t CHG5;
-    // std::size_t CHG55;
-    // std::size_t RA15;
-    // std::size_t RA2;
-    // std::size_t RA100;
+
     CommsDevCount::CommsDevCount(std::array<std::size_t, 9> counts)
     {
         C16 = counts.at(0);

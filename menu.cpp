@@ -10,6 +10,7 @@ string Menu::getMenuText()
     ss << "R -> Read Stations from Disk" << std::endl;
     ss << "W -> Write Stations to Disk" << std::endl;
     ss << "A -> Add New Station" << std::endl;
+    ss << "M -> Manage Station" << std::endl;
     ss << "D -> Delete Station" << std::endl;
     ss << "L -> List All Stations" << std::endl;
     ss << "Q -> Quit" << std::endl << std::endl;

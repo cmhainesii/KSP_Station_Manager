@@ -24,13 +24,12 @@ namespace KSP_SM
 
     struct OrbitalParameters
     {
-        size_t apoapsis;
-        std::size_t periapsis;
+        size_t apoapsis { 100000};
+        std::size_t periapsis {100000};
 
     public:
         OrbitalParameters() = default;
-
-        OrbitalParameters(size_t ap, size_t pe);
+        explicit OrbitalParameters(size_t ap, size_t pe);
     };
 
     
@@ -47,17 +46,21 @@ namespace KSP_SM
         {
 
         public:
+            ~SpaceStation();
             string ToString() const;
             static string DockingPortToString(DockingPort port);
             static string CommsDeviceToString(CommunicationDevice dev);
             string GetName() const;
             string GetStationID() const;
-            size_t GetCapacity() const;
+            std::size_t GetCapacity() const;
+            std::size_t GetNumberKerbalsAboard() const;
+            void AddKerbal(const std::string& name);
             bool isActive() const;
             OrbitalParameters GetOrbitalDetails() const;
             SpaceStation() = default;
-            SpaceStation(string station_id) noexcept;
-            ~SpaceStation();
+            explicit SpaceStation(string station_id) noexcept;
+            std::size_t RemoveKerbalByIndex(std::size_t index);
+            
 
 
         private:
