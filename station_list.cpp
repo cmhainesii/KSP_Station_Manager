@@ -1,5 +1,6 @@
 #include "include/station_list.hpp"
 #include "include/utils.hpp"
+
 #include <fmt/core.h>
 #include <iostream>
 #include <fstream>

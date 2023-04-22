@@ -6,6 +6,7 @@
 #include <fstream>
 #include <limits>
 #include <ios>
+#include <cxxopts.hpp>
 
 #include <nlohmann/json.hpp>
 #include <fmt/core.h>
@@ -31,6 +32,7 @@ const string STATIONS_FILENAME = "stations.json";
 
 int main(int argc, char **argv)
 {
+    /*
     // Convert arguments list to a vector of std::strings
     vector<string> argument_list(argv, argv + argc);
 
@@ -76,6 +78,51 @@ int main(int argc, char **argv)
 
         return 0;
     }
+    */
+   cxxopts::Options options("MyProgram", "One line description");
+
+   options.add_options()
+    ("d,dump", "Dump Station Info To Text File") // Bool parameter
+    ("o,outfile", "Output Filename", cxxopts::value<string>()->default_value("stations.txt"))
+    ("i,infile", "Stations JSON Input Filename", cxxopts::value<string>()->default_value("stations.json"))
+    ;
+    
+    string out_filename {};
+    try{
+        auto result = options.parse(argc,argv);
+        
+        if (result.count("dump"))
+        {
+            // Outputting station info to text file
+            out_filename = result["outfile"].as<string>();
+            string in_filename = result["infile"].as<string>();
+            std::cout << fmt::format("Output filename: {}\n", out_filename);
+            std::cout << fmt::format("Input filename: {}\n", in_filename);
+
+            StationList stations;
+            stations.ReadStationsFromFile(in_filename);
+            std::ofstream out_file(out_filename);
+            out_file.exceptions(std::ofstream::failbit);
+            for (const auto& current : stations.GetStations())
+            {
+                out_file << current->ToString();
+            }
+            return EXIT_SUCCESS;
+        }
+    } catch (const cxxopts::exceptions::parsing& e)
+    {
+        std::cerr << "Caught\n";
+        std::cerr << fmt::format("Error: {}\n", e.what());
+        return EXIT_FAILURE;
+    } catch (std::ofstream::failure& e)
+    {
+        std::cerr << fmt::format("Error opening file: {} for writing. Aborting.\n", out_filename);
+        return EXIT_FAILURE;
+    }
+
+    
+
+   
 
     StationList stations;
     bool exitProgram = false;
