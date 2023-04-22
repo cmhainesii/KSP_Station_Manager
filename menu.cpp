@@ -1,7 +1,7 @@
 #include "include/menu.hpp"
 #include <sstream>
 
-string Menu::getMainMenuText()
+string Menu::GetMainMenuText()
 {
     std::stringstream ss;
 
@@ -14,6 +14,20 @@ string Menu::getMainMenuText()
     ss << "D -> Delete Station" << std::endl;
     ss << "L -> List All Stations" << std::endl;
     ss << "Q -> Quit" << std::endl << std::endl;
+
+    return ss.str();
+}
+
+string Menu::GetMangeStationMenuText()
+{
+    std::stringstream ss;
+
+    ss << "Manage Station Options\n\n";
+    ss << "A -> Add Kerbal\n";
+    ss << "R -> Remove Kerbal\n";
+    ss << "E -> Edit Capacity\n";
+    ss << "F -> Finish Managing Stations\n\n";
+    ss << "Enter Your Selection: ";
 
     return ss.str();
 }

@@ -1,5 +1,6 @@
 #include "include/station_list.hpp"
 #include "include/utils.hpp"
+#include "include/menu.hpp"
 
 #include <fmt/core.h>
 #include <iostream>
@@ -114,12 +115,7 @@ void StationList::ManageStationsFromConsole()
 
     while (!doneManaging)
     {
-        std::cout << "Manage Station Options\n\n";
-        std::cout << "A -> Add Kerbal\n";
-        std::cout << "R -> Remove Kerbal\n";
-        std::cout << "E -> Edit Capacity\n";
-        std::cout << "F -> Finish Managing Stations\n\n";
-        std::cout << "Enter Your Selection: ";
+        std::cout << Menu::GetMangeStationMenuText();
         std::getline(std::cin, buffer);
         if (buffer.size() == 0)
         {

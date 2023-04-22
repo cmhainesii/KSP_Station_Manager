@@ -127,7 +127,7 @@ int main(int argc, char **argv)
     StationList stations;
     bool exitProgram = false;
     std::string buffer;
-    std::string menuText = Menu::getMainMenuText();
+    std::string menuText = Menu::GetMainMenuText();
 
     std::cout << "KSP Station Manger\n";
     std::cout << fmt::format("Verson: {}.{}\n", KSP_SM_VERSION_MAJOR, KSP_SM_VERSION_MINOR);

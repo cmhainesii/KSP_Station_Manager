@@ -796,7 +796,16 @@ namespace KSP_SM
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        while(!doneEnteringList)
+
+        // If kerbal capacity is greater than zero, allow user to enter names of 
+        // kerbals onboard if any
+        if (!capacity)
+        {
+            doneEnteringList = true;
+        }
+
+        std::size_t remaining_space = capacity;
+        while(!doneEnteringList && remaining_space)
         {
 
             std::cout << "Enter Kerbals Currently On-Board. Leave blank when finished." << std::endl;
@@ -811,7 +820,14 @@ namespace KSP_SM
 
             // Add kerbal to list
             kerbals.push_back(buffer);
+            --remaining_space;
 
+        }
+
+        if (capacity && !remaining_space)
+        {
+            std::cout << "Station capacity reached.\n";
+            Utility::PressEnterToContinue();
         }
 
         // Build new station!
